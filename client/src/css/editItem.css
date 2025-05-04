@@ -1,0 +1,34 @@
+.edit-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.display-mode {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.edit-mode {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.edit-button,
+.save-button,
+.cancel-button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.save-button {
+  color: green;
+}
+
+.cancel-button {
+  color: red;
+}

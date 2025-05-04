@@ -1,0 +1,160 @@
+/* מבנה גריד לתמונות */
+.photos-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  /* 5 תמונות בכל שורה */
+  gap: 20px;
+  padding: 20px;
+}
+
+/* עיצוב של כל תמונה */
+.photo-item {
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+  background-color: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.photo-img {
+  transition: transform 0.3s ease;
+  width: 300px;
+  height: 300px;
+  overflow: hidden;
+}
+
+/* הכותרת של כל תמונה */
+.photo-title {
+  padding: 10px;
+  text-align: center;
+  font-size: 14px;
+  color: #333;
+}
+
+/* שינוי עיצוב בריחוף */
+.photo-item:hover {
+  transform: scale(1.005);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.photo-item:hover .photo-img {
+  transform: scale(1.05);
+}
+
+/* עיצוב לחלונית קופצת */
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
+
+.popup-content {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 400px;
+  z-index: 10;
+}
+
+button {
+  padding: 10px;
+  background-color: #52bcea;
+  color: white;
+  border: none;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+button:hover {
+  background-color: #49a1c6;
+}
+
+/* רקע קופץ */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  /* רקע אפור חצי שקוף */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  /* לוודא שזה יימצא מעל שאר האלמנטים */
+}
+
+/* חלונית מודאלית */
+.modal {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  width: 500px;
+  /* אתה יכול לשנות את הרוחב כראות עיניך */
+  max-width: 90%;
+}
+
+.edit-item-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.input-underline {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.submit-button,
+.cancel-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.submit-button {
+  background-color: #52bcea;
+  color: white;
+}
+
+.cancel-button {
+  background-color: #f44336;
+  color: white;
+}
+
+.userName,
+.albumName {
+  color: rgb(237, 230, 230);
+}
+
+.backToAlbums {
+  position: fixed;
+  margin-left: -45em;
+  z-index: 10;
+  margin-right: 200em;
+}

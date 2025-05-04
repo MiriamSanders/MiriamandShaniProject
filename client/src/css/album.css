@@ -1,0 +1,66 @@
+/* מבנה גריד */
+.albums-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  padding: 20px;
+}
+
+/* עיצוב אלבום */
+.album {
+  border: 3px solid darkturquoise;
+  padding: 20px;
+  text-align: center;
+  background-color: white;
+  transition: background-color 0.3s, color 0.3s, opacity 0.3s;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  color: black;
+  background-image: url('../pictures/folder.png');
+  /* תמונת רקע */
+  background-size: cover;
+  background-position: center;
+  height: 200px;
+  /* הגדרת גובה קבוע */
+}
+
+/* טקסט בתוך האלבום (הכותרת צמודה לתחתית האלבום) */
+.albumText {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  font-size: 18px;
+  color: white;
+  background-color: rgba(0, 0, 0, 0.5);
+  /* רקע כהה לכותרת */
+  padding: 10px;
+  text-align: center;
+  margin: 0;
+}
+
+/* טקסט בלחיצה */
+.album::after {
+  content: 'CLICK TO VIEW';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: opacity 0.3s;
+  color: transparent;
+}
+
+.album:hover::after {
+  opacity: 1;
+  /* הצגת טקסט CLICK TO VIEW בריחוף */
+}
+
+/* עיצוב בריחוף לכפתור 'CLICK TO VIEW' */
+.album:hover::after {
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+  opacity: 1;
+}
