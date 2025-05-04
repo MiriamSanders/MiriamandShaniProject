@@ -1,14 +1,13 @@
-const db =require('../dbConnection');
+const dbPromise = require("../dbConnection");
+require('dotenv').config({ path: '../.env' });
 const express = require("express");
 const bcrypt=require('bcrypt');
 const router = express.Router();
 const SALT_ROUNDS=10;
-router.post('/signup', (req, res) => {
+router.post('/signup',async (req, res) => {
+    const db = await dbPromise;
     const { name, email, userName, phone, password,profilePicture } = req.body;
-
-   // const profilePicture = faker.image.avatar(); // or let user upload/provide it
-
-   bcrypt.hash(password, SALT_ROUNDS)
+    bcrypt.hash(password, SALT_ROUNDS)
         .then((hashedPassword) => {
             return db.query(
                 `INSERT INTO USER (name, email, userName, phone, profilePicture) VALUES (?, ?, ?, ?, ?)`,
@@ -29,6 +28,6 @@ router.post('/signup', (req, res) => {
         res.status(500).json({ error: 'Signup failed' });
     });
 });
-router.post('/login',);
+//router.post('/login',);
 
 module.exports = router
