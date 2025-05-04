@@ -3,6 +3,7 @@ const dbPromise = require("../dbConnection");
 const router = express.Router();
 router.get('/', async (req, res) => {
     const userId = req.query.userId;
+     const db = await dbPromise;
     db.query(`SELECT * FROM todos WHERE userId = ?`, [userId])
         .then(([rows]) => {
             if (rows.length === 0) {
@@ -20,6 +21,6 @@ router.put(':id', async (req, res) => {
     const db = await dbPromise;
     const { complete } = req.body;
 });
-router.post('/',);
-router.delete("/:id",);
+// router.post('/',);
+// router.delete("/:id",);
 module.exports = router
