@@ -1,5 +1,6 @@
 const mysql = require("mysql2/promise");
-require('dotenv').config();
+require('dotenv').config({ path: '../.env' });
+const { faker } = require('@faker-js/faker');
 async function main() {
     try {
         const db = await mysql.createConnection({
@@ -11,7 +12,7 @@ async function main() {
         });
 
         console.log("Connected to MySQL server");
-        await db.query(`CREATE TABLE USER (
+        await db.query(`CREATE TABLE IF NOT EXISTS USER (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
@@ -20,14 +21,14 @@ async function main() {
     profilePicture VARCHAR(255),
     is_deleted BOOLEAN DEFAULT FALSE
 );`);
-        await db.query(`CREATE TABLE USERPASSWORD (
+        await db.query(`CREATE TABLE IF NOT EXISTS USERPASSWORD (
     userId INT,
     password VARCHAR(255) NOT NULL,
     FOREIGN KEY (userId) REFERENCES USER(id),
     is_deleted BOOLEAN DEFAULT FALSE
 );
 `);
-        await db.query(`CREATE TABLE POSTS (
+        await db.query(`CREATE TABLE IF NOT EXISTS POSTS (
     id INT AUTO_INCREMENT PRIMARY KEY,
     userId INT,
     title VARCHAR(255) NOT NULL,
@@ -36,7 +37,7 @@ async function main() {
     FOREIGN KEY (userId) REFERENCES USER(id)
 );
 `);
-        await db.query(`CREATE TABLE COMMENTS (
+        await db.query(`CREATE TABLE IF NOT EXISTS COMMENTS (
     postId INT,
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
@@ -45,7 +46,7 @@ async function main() {
     is_deleted BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (postId) REFERENCES POSTS(id)
 );`);
-        await db.query(`CREATE TABLE TODOS (
+        await db.query(`CREATE TABLE IF NOT EXISTS TODOS (
     userId INT,
     id INT AUTO_INCREMENT PRIMARY KEY,
     body TEXT NOT NULL,
@@ -53,14 +54,14 @@ async function main() {
     is_deleted BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (userId) REFERENCES USER(id)
 );`);
-        await db.query(`CREATE TABLE ALBUMS (
+        await db.query(`CREATE TABLE IF NOT EXISTS ALBUMS (
     userId INT,
     id INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     is_deleted BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (userId) REFERENCES USER(id)
 );`);
-        await db.query(`CREATE TABLE PHOTOS (
+        await db.query(`CREATE TABLE IF NOT EXISTS PHOTOS (
     id INT AUTO_INCREMENT PRIMARY KEY,
     albumId INT,
     title VARCHAR(255) NOT NULL,
@@ -68,9 +69,83 @@ async function main() {
     is_deleted BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (albumId) REFERENCES ALBUMS(id)
 );`);
-    }
-    catch (error) {
-        console.error("ERROR:", error);
+
+        for (let i = 0; i < 5; i++) {
+            const [result] = await db.query(`
+            INSERT INTO USER (name, email, userName, phone, profilePicture)
+            VALUES (?, ?, ?, ?, ?)`, [
+                faker.person.fullName(),
+                faker.internet.email(),
+                faker.internet.username(),
+                faker.phone.number('###-###-####'),
+                faker.image.avatar()
+            ]);
+
+            const userId = result.insertId;
+
+            // USERPASSWORD
+            await db.query(`INSERT INTO USERPASSWORD (userId, password) VALUES (?, ?)`, [
+                userId,
+                faker.internet.password()
+            ]);
+
+            // POSTS
+            for (let j = 0; j < 2; j++) {
+                const [postResult] = await db.query(`
+                INSERT INTO POSTS (userId, title, body) VALUES (?, ?, ?)`, [
+                    userId,
+                    faker.lorem.sentence(),
+                    faker.lorem.paragraphs(2)
+                ]);
+
+                const postId = postResult.insertId;
+
+                // COMMENTS
+                for (let k = 0; k < 2; k++) {
+                    await db.query(`INSERT INTO COMMENTS (postId, name, email, body) VALUES (?, ?, ?, ?)`, [
+                        postId,
+                        faker.person.fullName(),
+                        faker.internet.email(),
+                        faker.lorem.sentences()
+                    ]);
+                }
+            }
+
+            // TODOS
+            for (let j = 0; j < 2; j++) {
+                await db.query(`INSERT INTO TODOS (userId, body, completed) VALUES (?, ?, ?)`, [
+                    userId,
+                    faker.lorem.sentence(),
+                    faker.datatype.boolean()
+                ]);
+            }
+
+            // ALBUMS & PHOTOS
+            for (let j = 0; j < 1; j++) {
+                const [albumResult] = await db.query(`INSERT INTO ALBUMS (userId, title) VALUES (?, ?)`, [
+                    userId,
+                    faker.lorem.words(3)
+                ]);
+
+                const albumId = albumResult.insertId;
+
+                for (let k = 0; k < 2; k++) {
+                    await db.query(`INSERT INTO PHOTOS (albumId, title, url) VALUES (?, ?, ?)`, [
+                        albumId,
+                        faker.lorem.sentence(),
+                        faker.image.url()
+                    ]);
+                }
+            }
+        }
+
+        console.log("✅ Fake data inserted successfully!");
+        await db.end();
+
+    } catch (error) {
+        console.error("❌ ERROR:", error);
+    } finally {
+
     }
 }
 main();
