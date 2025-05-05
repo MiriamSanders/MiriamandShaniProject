@@ -9,14 +9,14 @@ app.use(express.json());
 // const commentsRoutes=require("./routes/CommentsRoutes");
 // const photosRoutes=require("./routes/photoRoutes");
 // const postsRoutes=require("./routes/postsRoutes");
-const registrationRoutes=require("./routes/registrationRoutes");
- const todosRoutes=require("./routes/todosRoutes");
+const registrationRoutes = require("./BL/routes/registrationRoutes");
+const todosRoutes = require("./BL/routes/todosRoutes");
 // app.use("/albums",albumsRoutes);
 // app.use('/comments',commentsRoutes);
 // app.use("/posts",postsRoutes);
 // app.use("/photos",photosRoutes);
- app.use('/todos',todosRoutes);
-app.use('/registration',registrationRoutes);
+app.use('/todos', todosRoutes);
+app.use('/registration', registrationRoutes);
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
 });
