@@ -1,12 +1,12 @@
 const express = require("express");
-const {GenericGet, GenericPost, GenericPut, GenericDelete, } = require("../../DL/genericDL");
+const { GenericGet, GenericPost, GenericPut, GenericDelete } = require("../../DL/genericDL");
 //const dbPromise = require("../../dbConnection");
 const router = express.Router();
 // New GET route using the imported getTodos function
 router.get('/', async (req, res) => {
     try {
         const userId = req.query.userId;
-        const todos = await GenericGet("todos","userId", userId); // Pass table name and userId to GenericGet
+        const todos = await GenericGet("todos", "userId", userId); // Pass table name and userId to GenericGet
         if (!todos || todos.length === 0) {
             return res.status(404).json({ message: 'Todos not found' });
         }
@@ -16,6 +16,7 @@ router.get('/', async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 });
+
 router.put('/:id', async (req, res) => {
     try {
         const { id } = req.params;
