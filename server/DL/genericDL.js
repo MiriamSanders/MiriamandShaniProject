@@ -26,28 +26,34 @@ async function GenericGet(table, fieldName, fieldValue, limit) {
 }
 async function GenericPost(table, data) {
     try {
-        const db = await dbPromise; // Get the database connection
-        const insertQuery = mysql.format(`
-            INSERT INTO ?? SET ?
-        `, [table, data]);
+        const db = await dbPromise;
+
+        // Insert the data
+        const insertQuery = mysql.format(`INSERT INTO ?? SET ?`, [table, data]);
         const [insertResult] = await db.execute(insertQuery);
 
-        if (insertResult.insertId) {
-            const selectQuery = mysql.format(`
-                SELECT * FROM ?? WHERE id = ?
-            `, [table, insertResult.insertId]);
-            const [rows] = await db.execute(selectQuery);
-            console.log(rows);
-            
-            return rows[0] || null; // Return the inserted row
-        }
+        let id = insertResult.insertId;
 
-        return null; // Return null if no row was inserted
+        if (id) {
+            // If insertId exists, get the full row by id
+            const selectQuery = mysql.format(`SELECT * FROM ?? WHERE id = ?`, [table, id]);
+            const [rows] = await db.execute(selectQuery);
+            return rows[0] || null;
+        } else if (data.userId) {
+            // Fallback: if insertId doesn't exist, try getting the row by userID
+            const idQuery = mysql.format(`SELECT * FROM ?? WHERE userId = ?`, [table, data.userId]);
+            const [rows] = await db.execute(idQuery);
+            if (rows.length === 0) throw new Error('No record found for the given userID');
+            return rows[0];
+        } else {
+            throw new Error('Insert did not return an ID, and userID was not provided.');
+        }
     } catch (error) {
         console.error('Error inserting data:', error);
         throw error;
     }
 }
+
 async function GenericPut(table, id, data) {
     try {
         const db = await dbPromise;

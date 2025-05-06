@@ -18,12 +18,18 @@ router.post('/signup', async (req, res) => {
             if (!user) {
                 return res.status(500).json({ error: "Failed to save user" });
             }
+            console.log("User created:", user);
             const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
-            const userPassword = await GenericPost("userpassword", { userId:user[0].insertId, password: hashedPassword });
+            const passwordObject = {
+                userId: user.id,
+                password: hashedPassword
+            };
+            const userPassword = await GenericPost("userpassword", passwordObject);
+            console.log("User password created:", userPassword);
             if (!userPassword) {
                 return res.status(500).json({ error: "Failed to save user password" });
             }
-            return res.status(201).json(user[0]);
+            return res.status(201).json(user);
         } else {
             return res.status(409).json({ error: "User already exists" });
         }
