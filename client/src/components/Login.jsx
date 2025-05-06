@@ -5,7 +5,7 @@ import '../css/login.css'
 
 const Login = () => {
   const { setUser } = useContext(UserContext);
-  const [userLogin, setUserLogin] = useState({ name: '', password: '' });
+  const [userLogin, setUserLogin] = useState({ userName: '', password: '' });
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
@@ -16,10 +16,20 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`http://localhost:3012/users?username=${userLogin.name}&website=${userLogin.password}`);
+      console.log('Login attempt:', userLogin);
+      const response = await fetch(`http://localhost:3012/registration/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        }, 
+      body: JSON.stringify(userLogin),
+      });
       const data = await response.json();
+      console.log('Login response:', data);
       if (data.length > 0) {
         const foundUser = data[0];
+        console.log('Found user:', foundUser);
+        
         if (foundUser) {
           localStorage.setItem('user', JSON.stringify(foundUser));
           setUser(foundUser);
@@ -50,7 +60,7 @@ const Login = () => {
             <input
               type="text"
               value={userLogin.name}
-              onChange={(e) => setUserLogin(prev => ({ ...prev, name: e.target.value }))}
+              onChange={(e) => setUserLogin(prev => ({ ...prev, userName: e.target.value }))}
               placeholder="Type username..."
               required
               style={{ width: '100%', padding: '8px', marginBottom: '10px' }}

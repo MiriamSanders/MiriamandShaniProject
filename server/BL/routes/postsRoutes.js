@@ -8,7 +8,7 @@ router.get('/', async (req, res) => {
     try {
         const posts = await getPosts(); // Fetch posts from the database
         if (!posts || posts.length === 0) {
-            return res.status(404).json({ message: 'Posts not found' });
+            return res.status(200).json([]);
         }
         res.status(200).json(posts);
     } catch (err) {
@@ -28,7 +28,7 @@ router.post('/', async (req, res) => {
             return res.status(400).json({ message: 'Failed to create post' });
         }
 
-        res.status(201).json({ message: 'post created successfully', newPost });
+        res.status(201).json(newPost[0]); // Access the insertId from the result
     } catch (err) {
         console.error('Error creating post:', err);
         res.status(500).json({ error: 'Internal server error' });

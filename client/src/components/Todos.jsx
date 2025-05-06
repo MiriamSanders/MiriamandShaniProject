@@ -10,10 +10,10 @@ const Todos = () => {
   const [myTodos, setMyTodos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const [sortField, setSortField] = useState('title');
+  const [sortField, setSortField] = useState('body');
   const [sortOrder, setSortOrder] = useState('asc');
   const [isEditing, setIsEditing] = useState(null);
-  const fields = [{ name: "title", inputType: "text" }];
+  const fields = [{ name: "body", inputType: "text" }];
   const initialObject = { userId: user.id, completed: false };
 
   useEffect(() => {
@@ -82,7 +82,7 @@ const Todos = () => {
       </button>
       <div className='todosList'>
         <select onChange={(e) => setSortField(e.target.value)} value={sortField}>
-          <option value="title">Title</option>
+          <option value="body">Body</option>
           <option value="completed">Completed</option>
           <option value="id">ID</option>
         </select>
@@ -95,7 +95,7 @@ const Todos = () => {
         <ul>
           {sortTodos(myTodos)
             .filter(task =>
-              task.title.toLowerCase().includes(search.toLowerCase()) ||
+              task.body.toLowerCase().includes(search.toLowerCase()) ||
               task.id.toString().includes(search) ||
               ("true".includes(search.toLowerCase()) && task.completed) ||
               ("false".includes(search.toLowerCase()) && !task.completed)
@@ -106,7 +106,7 @@ const Todos = () => {
                   {isEditing === task.id ? (
                     <EditItem
                       item={task}
-                      fields={[{ name: "title", inputType: "text" }]} // Define fields dynamically
+                      fields={[{ name: "body", inputType: "text" }]} // Define fields dynamically
                       type="todos"
                       setData={setMyTodos}
                       setIsEditing={setIsEditing}
@@ -118,7 +118,7 @@ const Todos = () => {
                         checked={task.completed}
                         onChange={() => handleCheckboxChange(task.id)}
                       />
-                      <div className="task-text">{task.title}</div>
+                      <div className="task-text">{task.body}</div>
                       <button onClick={() => {
                         setIsEditing(task.id);
                       }}>Edit</button>

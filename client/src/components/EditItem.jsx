@@ -13,13 +13,16 @@ const EditItem = ({ item, fields, type, setData, setIsEditing, setView = (x) => 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const filteredFormData = Object.fromEntries(
+      Object.entries(formData).filter(([_, value]) => value !== null && value !== undefined)
+    );
     try {
       const response = await fetch(`http://localhost:3012/${type}/${item.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(filteredFormData),
       });
 
       if (!response.ok) {

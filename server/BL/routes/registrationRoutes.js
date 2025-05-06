@@ -2,32 +2,61 @@ const dbPromise = require("../../dbConnection");
 require('dotenv').config({ path: '../.env' });
 const express = require("express");
 const bcrypt = require('bcrypt');
+const { GenericGet, GenericPost } = require("../../DL/genericDL");
 const router = express.Router();
 const SALT_ROUNDS = 10;
 router.post('/signup', async (req, res) => {
-    const db = await dbPromise;
-    const { name, email, userName, phone, password, profilePicture } = req.body;
-    bcrypt.hash(password, SALT_ROUNDS)
-        .then((hashedPassword) => {
-            return db.query(
-                `INSERT INTO USER (name, email, userName, phone, profilePicture) VALUES (?, ?, ?, ?, ?)`,
-                [name, email, userName, phone, profilePicture]
-            ).then(([result]) => {
-                const userId = result.insertId;
-                return db.query(
-                    `INSERT INTO USERPASSWORD (userId, password) VALUES (?, ?)`,
-                    [userId, hashedPassword]
-                );
-            });
-        })
-        .then(() => {
-            res.status(201).json({ message: 'User signed up successfully' });
-        })
-        .catch((err) => {
-            console.error('Signup error:', err);
-            res.status(500).json({ error: 'Signup failed' });
-        });
+    const { password, ...userDetails } = req.body;
+    try {
+        const checkIfExists = await GenericGet("user", "userName", userDetails.userName);
+        if (checkIfExists == null) {
+            if (!password || typeof password !== "string") {
+                console.error("Invalid password value:", password);
+                return res.status(400).json({ error: "Invalid password value" });
+            }
+            const user = await GenericPost("user", userDetails);
+            if (!user) {
+                return res.status(500).json({ error: "Failed to save user" });
+            }
+            const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
+            const userPassword = await GenericPost("userpassword", { userId:user[0].insertId, password: hashedPassword });
+            if (!userPassword) {
+                return res.status(500).json({ error: "Failed to save user password" });
+            }
+            return res.status(201).json(user[0]);
+        } else {
+            return res.status(409).json({ error: "User already exists" });
+        }
+    } catch (error) {
+        console.error("Signup error:", error);
+        return res.status(500).json({ error: "Internal server error" });
+    }
 });
-//router.post('/login',);
+
+router.post('/login', async (req, res) => {
+    const { userName, password } = req.body;
+    try {
+        const user = await GenericGet("user", "userName", userName);
+        if (!user) {
+            return res.status(404).json({ error: "User not found" });
+        }
+        console.log("User found:", user);
+        const userPassword = await GenericGet("userpassword", "userId", user[0].id);
+        console.log("User password:", await userPassword);
+        if (!userPassword) {
+            return res.status(404).json({ error: "Invalid user name or password" });
+        }
+        const isMatch = await bcrypt.compare(password, userPassword[0].password);
+        if (!isMatch) {
+            return res.status(401).json({ error: "Invalid user name or password" });
+        }
+        
+        return res.status(200).json(user);
+    } catch (error) {
+        console.error("Login error:", error);
+        return res.status(500).json({ error: "Internal server error" });
+    }
+}
+);
 
 module.exports = router

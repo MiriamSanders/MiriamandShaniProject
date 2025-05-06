@@ -49,6 +49,7 @@ const Albums = () => {
       <AddItem fields={fields} initialObject={initialObject} setData={setAlbums} type={"albums"} />
 
       <div className="albums-grid">
+        {console.log(albums)};
         {albums.filter(album =>
           album.title.toLowerCase().includes(search.toLowerCase()) ||
           album.id.toString().includes(search)
@@ -56,7 +57,7 @@ const Albums = () => {
           <>
             <div className="album">
               <Link to={`/users/${user.id}/albums/${album.id}`} key={album.id} state={{ album }}>
-                <p className='albumText'>{album.id + 1}. {album.title}</p>
+                <p className='albumText'>{album.id}. {album.title}</p>
               </Link>
               <Delete
                 setMyItem={setAlbums}

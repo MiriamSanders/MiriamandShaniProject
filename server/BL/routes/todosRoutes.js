@@ -8,7 +8,7 @@ router.get('/', async (req, res) => {
         const userId = req.query.userId;
         const todos = await GenericGet("todos", "userId", userId); // Pass table name and userId to GenericGet
         if (!todos || todos.length === 0) {
-            return res.status(404).json({ message: 'Todos not found' });
+            return res.status(200).json([]);
         }
         res.status(200).json(todos);
     } catch (err) {

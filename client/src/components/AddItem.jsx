@@ -37,10 +37,12 @@ const AddItem = ({ fields, initialObject, type, setData }) => {
       }
 
       const newItem = await response.json();
+      console.log(newItem);
       setData((prev) => [newItem, ...prev]);
       setIsOpenModal(false);
       setFormData({});
     } catch (error) {
+      console.error("Error adding item:", error);
       setErrorMessage("An error occurred. Please try again.");
     }
   };

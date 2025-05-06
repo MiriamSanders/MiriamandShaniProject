@@ -1,15 +1,20 @@
 const mysql = require('mysql2/promise');
 const dbPromise = require("../dbConnection");
 
-async function GenericGet(table,fieldName, fieldValue) {
+async function GenericGet(table, fieldName, fieldValue, limit) {
     try {
         const db = await dbPromise; // Get the database connection
-        const query = mysql.format(`
-            SELECT * 
-            FROM ?? 
-            WHERE ?? = ? AND is_deleted = 0
-        `, [table, fieldName, fieldValue]);
-        const [rows] = await db.execute(query);
+    const params = [table, fieldName, fieldValue];
+    let query = `
+        SELECT * 
+        FROM ??
+        WHERE ?? = ? AND is_deleted = 0
+    `;
+    if (limit) {
+        query += ` LIMIT ?`;
+        params.push(limit);
+    }
+    const [rows] = await db.execute(mysql.format(query, params));
         if (rows.length === 0) {
             return null; // No rows found
         }
@@ -22,12 +27,22 @@ async function GenericGet(table,fieldName, fieldValue) {
 async function GenericPost(table, data) {
     try {
         const db = await dbPromise; // Get the database connection
-        const query = mysql.format(`
+        const insertQuery = mysql.format(`
             INSERT INTO ?? SET ?
         `, [table, data]);
-      
-        const [result] = await db.execute(query);
-        return result.insertId; // Return the ID of the inserted row
+        const [insertResult] = await db.execute(insertQuery);
+
+        if (insertResult.insertId) {
+            const selectQuery = mysql.format(`
+                SELECT * FROM ?? WHERE id = ?
+            `, [table, insertResult.insertId]);
+            const [rows] = await db.execute(selectQuery);
+            console.log(rows);
+            
+            return rows[0] || null; // Return the inserted row
+        }
+
+        return null; // Return null if no row was inserted
     } catch (error) {
         console.error('Error inserting data:', error);
         throw error;
@@ -52,7 +67,7 @@ async function GenericPut(table, id, data) {
 async function GenericDelete(table, id) {
     try {
         const db = await dbPromise; // Get the database connection
-        const query =mysql.format(` 
+        const query = mysql.format(` 
             UPDATE ?? 
             SET is_deleted = 1 
             WHERE id = ?
@@ -70,20 +85,20 @@ async function CascadeDelete(table, id, foreignKeyTable, foreignKeyColumn) {
         const db = await dbPromise; // Get the database connection
 
         // Mark the main record as deleted
-        const mainQuery = `
+        const mainQuery = mysql.format(`
             UPDATE ?? 
             SET is_deleted = 1 
             WHERE id = ?
-        `;
-        await db.execute(mainQuery, [table, id]);
+        `, [table, id]);
+        await db.execute(mainQuery);
 
         // Mark the referencing records as deleted
-        const cascadeQuery = `
+        const cascadeQuery = mysql.format(`
             UPDATE ?? 
             SET is_deleted = 1 
             WHERE ?? = ?
-        `;
-        await db.execute(cascadeQuery, [foreignKeyTable, foreignKeyColumn, id]);
+        `, [foreignKeyTable, foreignKeyColumn, id]);
+        await db.execute(cascadeQuery);
 
         return true; // Indicate success
     } catch (error) {
