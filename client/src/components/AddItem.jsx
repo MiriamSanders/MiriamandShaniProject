@@ -36,7 +36,7 @@ const AddItem = ({ fields, initialObject, type, setData }) => {
         throw new Error("Failed to add item");
       }
 
-      const newItem = await response.json();
+      const newItem = response.headers.get("Content-Length") !== "0" ? await response.json() : {};
       console.log(newItem);
       setData((prev) => [newItem, ...prev]);
       setIsOpenModal(false);

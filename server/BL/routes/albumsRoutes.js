@@ -34,7 +34,7 @@ router.post('/', async (req, res) => {
         if (!album|| album.length === 0) {
             return res.status(400).json({ error: "Failed to create album" });
         }
-        res.status(201).json( album[0] ); // Access the insertId from the result
+        res.status(201).json( album ); // Access the insertId from the result
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: "Internal server error" });

@@ -28,7 +28,7 @@ router.post('/', async (req, res) => {
             return res.status(400).json({ message: 'Failed to create post' });
         }
 
-        res.status(201).json(newPost[0]); // Access the insertId from the result
+        res.status(201).json(newPost); // Access the insertId from the result
     } catch (err) {
         console.error('Error creating post:', err);
         res.status(500).json({ error: 'Internal server error' });
@@ -47,7 +47,7 @@ router.put('/:id', async (req, res) => {
             return res.status(404).json({ message: 'post not found' });
         }
 
-        res.status(200).json({ message: 'post updated successfully', updatedPost });
+        res.status(200).json(updatedPost );
     } catch (err) {
         console.error('Error updating post:', err);
         res.status(500).json({ error: 'Internal server error' });

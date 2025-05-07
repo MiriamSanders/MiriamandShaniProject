@@ -93,6 +93,10 @@ const Todos = () => {
         </select>
 
         <ul>
+          {
+            console.log(myTodos)
+            
+          }
           {sortTodos(myTodos)
             .filter(task =>
               task.body.toLowerCase().includes(search.toLowerCase()) ||

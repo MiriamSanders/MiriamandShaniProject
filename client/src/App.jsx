@@ -9,7 +9,6 @@ import Albums from './components/Albums';
 import Navigation from './components/Navigation';
 import Photos from './components/Photos';
 import SignUp from './components/SignUp';
-import EditInfo from './components/EditInfo';
 import Info from './components/Info';
 import Error from './components/Error';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
@@ -34,7 +33,6 @@ const App = () => {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signUp" element={<SignUp />} />
-          <Route path="/editInfoNewUser" element={<EditInfo />} />
 
           <Route path="/users/:userId/home" element={<Home />} />
           <Route path="/users/guest/home" element={<Home />} />
@@ -45,7 +43,6 @@ const App = () => {
           <Route path="/users/:userId/albums" element={<Albums />} />
           <Route path="/users/:userId/albums/:id" element={<Photos />} />
           <Route path="/users/:userId/tasks" element={<Todos />} />
-          <Route path="/users/:userId/editInfo" element={<EditInfo />} />
           <Route path="/users/:userId/info" element={<Info />} />
 
           <Route path="*" element={<Error />} />

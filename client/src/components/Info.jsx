@@ -5,13 +5,6 @@ import '../css/info.css';
 
 function Info() {
     const { user } = useContext(UserContext);
-
-    const navigate = useNavigate();
-
-    const handleEdit = () => {
-        navigate(`/users/${user.id}/editInfo`, { state: { bool: "edit" } });
-    };
-
     return (
         <div className="userInfo">
             <h2>User Information</h2>
@@ -27,9 +20,6 @@ function Info() {
             <div>
                 <strong>Phone:</strong> {user.phone}
             </div>
-            <button onClick={handleEdit}>
-                Edit Information
-            </button>
         </div>
     );
 }

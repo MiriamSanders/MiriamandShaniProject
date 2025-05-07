@@ -1,39 +1,67 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import '../css/login.css';
-import { useContext } from 'react';
 import { UserContext } from './context';
+import '../css/login.css';
 
 function SignUp() {
-    const [userSignUp, setUserSignUp] = useState({ name: '', password: '', confirmPassword: '' });
+    const [formData, setFormData] = useState({
+        name: '',
+        userName: '',
+        email: '',
+        password: '',
+        phone: '',
+        profilePicture: '',
+        confirmPassword: '',
+    });
+
     const [error, setError] = useState('');
     const navigate = useNavigate();
-    const { user, setUser } = useContext(UserContext);
+    const { setUser } = useContext(UserContext);
 
-    const handleSignUp = async (e) => {
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        const { name, password, confirmPassword } = userSignUp;
-
+        const { password, confirmPassword, ...userDetails } = formData;
+    
         if (password !== confirmPassword) {
             setError('Passwords do not match');
             return;
         }
-
+    
         try {
-            const response = await fetch(`http://localhost:3012/users?username=${name}`);
-            const data = await response.json();
-
-            if (data.length > 0) {
+            const response = await fetch(`http://localhost:3012/registration/signup`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ ...userDetails, password }),
+            });
+    
+            if (response.status === 201) {
+                const newUser = await response.json();
+                alert('User created successfully!');
+                setUser({ ...userDetails, id: newUser.id });
+                localStorage.setItem('user', JSON.stringify({ ...userDetails, id: newUser.id }));
+                navigate(`/users/${newUser.id}/info`);
+            } else if (response.status === 409) {
                 setError('Username already exists');
             } else {
-                alert('User created successfully!');
-                setUser({ username: name, website: password });
-                navigate('/editInfoNewUser', { state: { bool: "add" } });
+                const errorData = await response.json();
+                setError(errorData.error || 'An unknown error occurred');
             }
         } catch (err) {
-            setError('An error occurred while connecting');
+            console.error('Error during signup:', err);
+            setError('An error occurred while connecting to the server');
         }
     };
+    
 
     return (
         <>
@@ -43,43 +71,92 @@ function SignUp() {
 
             <div className="loginForm">
                 <h2>Sign Up</h2>
-                <form onSubmit={handleSignUp}>
+                <form onSubmit={handleSubmit}>
+                    <div className="form-group">
+                        <label>Name:</label>
+                        <input
+                            type="text"
+                            name="name"
+                            value={formData.name}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+
                     <div className="form-group">
                         <label>Username:</label>
                         <input
                             type="text"
-                            value={userSignUp.name}
-                            onChange={(e) => setUserSignUp(prev => ({ ...prev, name: e.target.value }))}
-                            placeholder="Type username..."
+                            name="userName"
+                            value={formData.userName}
+                            onChange={handleChange}
                             required
                         />
                     </div>
+
+                    <div className="form-group">
+                        <label>Email:</label>
+                        <input
+                            type="email"
+                            name="email"
+                            value={formData.email}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+
                     <div className="form-group">
                         <label>Password:</label>
                         <input
                             type="password"
-                            value={userSignUp.password}
-                            onChange={(e) => setUserSignUp(prev => ({ ...prev, password: e.target.value }))}
-                            placeholder="Type password..."
+                            name="password"
+                            value={formData.password}
+                            onChange={handleChange}
                             required
                         />
                     </div>
+
                     <div className="form-group">
                         <label>Confirm Password:</label>
                         <input
                             type="password"
-                            value={userSignUp.confirmPassword}
-                            onChange={(e) => setUserSignUp(prev => ({ ...prev, confirmPassword: e.target.value }))}
-                            placeholder="Confirm password..."
+                            name="confirmPassword"
+                            value={formData.confirmPassword}
+                            onChange={handleChange}
                             required
                         />
                     </div>
+
+                    <div className="form-group">
+                        <label>Phone:</label>
+                        <input
+                            type="tel"
+                            name="phone"
+                            value={formData.phone}
+                            onChange={handleChange}
+                        />
+                    </div>
+
+                    <div className="form-group">
+                        <label>Profile Picture URL:</label>
+                        <input
+                            type="url"
+                            name="profilePicture"
+                            value={formData.profilePicture}
+                            onChange={handleChange}
+                            placeholder="https://example.com/image.jpg"
+                        />
+                    </div>
+
                     <button type="submit" className="login-button">
                         Sign Up
                     </button>
                 </form>
+
                 {error && <div className="error-message">{error}</div>}
-                <div className="toLogin">Already have an account?
+
+                <div className="toLogin">
+                    Already have an account?
                     <Link to="/login"> Please login</Link>
                 </div>
             </div>

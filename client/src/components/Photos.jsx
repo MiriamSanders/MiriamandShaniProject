@@ -31,9 +31,11 @@ const Photos = () => {
         if (loading) return;
         setLoading(true);
         try {
-            const response = await fetch(`http://localhost:3012/photos?albumId=${album.id}&_page=${page}`);
+            const response = await fetch(`http://localhost:3012/photos?albumId=${album.id}&&_page=${page}&&limit=10`);
             const result = await response.json();
-            const newPhotos = result.data.filter((photo) =>
+            console.log(result);
+            
+            const newPhotos = result.filter((photo) =>
                 !photos.some((existingPhoto) => existingPhoto.id === photo.id)
             );
             if (newPhotos.length < 10) {

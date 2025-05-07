@@ -39,7 +39,7 @@ function Comments({ postId }) {
       <div className="add-comment-button">
         <AddItem
           fields={[{ name: "body", inputType: "textArea" }]}
-          initialObject={{ postId, body: "", email: user?.email || "unknown" }}
+          initialObject={{ postId, body: "", email: user?.email || "unknown",name: user?.userName || "unknown" }}
           type="comments"
           setData={setComments}
         />
@@ -50,7 +50,9 @@ function Comments({ postId }) {
       ) : (
         comments.map((comment) => (
           <div key={comment.id} className="comment">
-            <b>Owner: {comment.email}</b>
+            <b>{comment.name}</b>
+            <br />
+            <b>{comment.email}</b>
             {!isEditing || isEditing !== comment.id ? (
               <>
                 <p>{comment.body}</p>

@@ -54,8 +54,8 @@ const Albums = () => {
           album.title.toLowerCase().includes(search.toLowerCase()) ||
           album.id.toString().includes(search)
         ).map((album, index) => (
-          <>
-            <div className="album">
+          
+            <div className="album" key={index}>
               <Link to={`/users/${user.id}/albums/${album.id}`} key={album.id} state={{ album }}>
                 <p className='albumText'>{album.id}. {album.title}</p>
               </Link>
@@ -66,7 +66,7 @@ const Albums = () => {
                 dependents={{ son: "photos", father: "album" }}
               />
             </div>
-          </>
+          
         ))}
       </div>
     </>

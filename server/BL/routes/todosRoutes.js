@@ -29,7 +29,7 @@ router.put('/:id', async (req, res) => {
             return res.status(404).json({ message: 'Todo not found' });
         }
 
-        res.status(200).json({ message: 'Todo updated successfully', updatedTodo });
+        res.status(200).json( updatedTodo);
     } catch (err) {
         console.error('Error updating todo:', err);
         res.status(500).json({ error: 'Internal server error' });
@@ -46,7 +46,7 @@ router.post('/', async (req, res) => {
             return res.status(400).json({ message: 'Failed to create todo' });
         }
 
-        res.status(201).json({ message: 'Todo created successfully', newTodo });
+        res.status(201).json( newTodo);
     } catch (err) {
         console.error('Error creating todo:', err);
         res.status(500).json({ error: 'Internal server error' });

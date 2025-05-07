@@ -16,7 +16,7 @@ router.get('/', async(req, res) => {
 router.post('/', async (req, res) => {
     try {
         const comment= await GenericPost("comments", req.body);
-        res.status(201).json( comment[0] ); // Access the insertId from the result
+        res.status(201).json( comment); // Access the insertId from the result
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: "Internal server error" });
@@ -24,11 +24,11 @@ router.post('/', async (req, res) => {
 });
 router.put('/:id', async (req, res) => {
     try {
-        const affectedRows = await GenericPut("comments", req.params.id, req.body);
-        if (affectedRows === 0) {
+        const updatedComment = await GenericPut("comments", req.params.id, req.body);
+        if (!updatedComment) {
             return res.status(404).json({ error: "Comment not found" });
         }
-        res.status(200).json({ message: "Comment updated successfully" });
+        res.status(200).json(updatedComment);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: "Internal server error" });

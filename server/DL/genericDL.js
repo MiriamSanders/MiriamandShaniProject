@@ -1,20 +1,24 @@
 const mysql = require('mysql2/promise');
 const dbPromise = require("../dbConnection");
 
-async function GenericGet(table, fieldName, fieldValue, limit) {
+async function GenericGet(table, fieldName, fieldValue, limit, offset) {
     try {
         const db = await dbPromise; // Get the database connection
-    const params = [table, fieldName, fieldValue];
-    let query = `
-        SELECT * 
-        FROM ??
-        WHERE ?? = ? AND is_deleted = 0
-    `;
-    if (limit) {
-        query += ` LIMIT ?`;
-        params.push(limit);
-    }
-    const [rows] = await db.execute(mysql.format(query, params));
+        const params = [table, fieldName, fieldValue];
+        let query = `
+            SELECT * 
+            FROM ??
+            WHERE ?? = ? AND is_deleted = 0
+        `;
+        if (limit) {
+            query += ` LIMIT ?`;
+            params.push(limit);
+        }
+        if (offset) {
+            query += ` OFFSET ?`;
+            params.push(offset);
+        }
+        const [rows] = await db.execute(mysql.format(query, params));
         if (rows.length === 0) {
             return null; // No rows found
         }
@@ -57,13 +61,15 @@ async function GenericPost(table, data) {
 async function GenericPut(table, id, data) {
     try {
         const db = await dbPromise;
-        const query = mysql.format(`
+        const updateQuery = mysql.format(`
             UPDATE ?? 
             SET ? 
             WHERE id = ?
         `, [table, data, id]);
-        const [result] = await db.execute(query);
-        return result.affectedRows; // Return the number of affected rows
+        await db.execute(updateQuery);
+        const selectQuery = mysql.format(`SELECT * FROM ?? WHERE id = ?`, [table, id]);
+            const [rows] = await db.execute(selectQuery);
+            return rows[0] || null;// Return the number of affected rows
     } catch (error) {
         console.error('Error updating data:', error);
         throw error;
