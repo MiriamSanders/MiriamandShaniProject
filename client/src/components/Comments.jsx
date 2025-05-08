@@ -3,7 +3,7 @@ import { UserContext } from "./context";
 import Delete from "./Delete";
 import AddItem from "./AddItem";
 import EditItem from "./EditItem";
-
+import { FaEdit } from 'react-icons/fa';
 function Comments({ postId }) {
   const [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -59,7 +59,7 @@ function Comments({ postId }) {
                 {comment.email === user?.email && (
                   <>
                     <Delete setMyItem={setComments} id={comment.id} type="comments" />
-                    <div onClick={() => handleEdit(comment)}>✏️</div>
+                    <div onClick={() => handleEdit(comment)}><FaEdit/></div>
                   </>
                 )}
               </>

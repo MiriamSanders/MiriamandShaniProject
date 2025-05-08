@@ -3,41 +3,33 @@ require('dotenv').config({ path: '../.env' });
 const express = require("express");
 const bcrypt = require('bcrypt');
 const { GenericGet, GenericPost } = require("../../DL/genericDL");
-const router = express.Router();
-const SALT_ROUNDS = 10;
 router.post('/signup', async (req, res) => {
     const { password, ...userDetails } = req.body;
+    if (!password || typeof password !== "string") {
+        console.error("Invalid password value:", password);
+        return res.status(400).json({ error: "Invalid password value" });
+    }
     try {
-        const checkIfExists = await GenericGet("user", "userName", userDetails.userName);
-        if (checkIfExists == null) {
-            if (!password || typeof password !== "string") {
-                console.error("Invalid password value:", password);
-                return res.status(400).json({ error: "Invalid password value" });
-            }
-            const user = await GenericPost("user", userDetails);
-            if (!user) {
-                return res.status(500).json({ error: "Failed to save user" });
-            }
-            console.log("User created:", user);
-            const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
-            const passwordObject = {
-                userId: user.id,
-                password: hashedPassword
-            };
-            const userPassword = await GenericPost("userpassword", passwordObject);
-            console.log("User password created:", userPassword);
-            if (!userPassword) {
-                return res.status(500).json({ error: "Failed to save user password" });
-            }
-            return res.status(201).json(user);
-        } else {
+        const existingUser = await GenericGet("user", "userName", userDetails.userName);
+        if (existingUser) {
             return res.status(409).json({ error: "User already exists" });
         }
+        const user = await GenericPost("user", userDetails);
+        if (!user) throw new Error("Failed to save user");
+        const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
+        const userPassword = await GenericPost("userpassword", {
+            userId: user.id,
+            password: hashedPassword
+        });
+        if (!userPassword) throw new Error("Failed to save user password");
+        console.log("User created:", user);
+        return res.status(201).json(user);
     } catch (error) {
-        console.error("Signup error:", error);
+        console.error("Signup error:", error.message);
         return res.status(500).json({ error: "Internal server error" });
     }
 });
+
 
 router.post('/login', async (req, res) => {
     const { userName, password } = req.body;
@@ -56,7 +48,7 @@ router.post('/login', async (req, res) => {
         if (!isMatch) {
             return res.status(401).json({ error: "Invalid user name or password" });
         }
-        
+
         return res.status(200).json(user);
     } catch (error) {
         console.error("Login error:", error);

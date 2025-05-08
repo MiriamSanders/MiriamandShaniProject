@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import '../css/delete.css'
-
+import { FaTrash } from 'react-icons/fa';   
 const Delete = (props) => {
     const [showConfirmation, setShowConfirmation] = useState(false);
 
@@ -38,7 +38,7 @@ const Delete = (props) => {
 
     return (
         <div>
-            <span onClick={handleDeleteClick}>🗑️</span>
+            <span onClick={handleDeleteClick}><FaTrash/></span>
             {showConfirmation && (
                 <div className="confirmation-dialog">-
                     <p>{`This ${props?.dependents?.father} has ${props?.dependents?.son}. Are you sure you want to delete?`}</p>

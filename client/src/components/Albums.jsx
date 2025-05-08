@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import AddItem from './AddItem';
 import Delete from './Delete';
 import '../css/album.css';
-
 const Albums = () => {
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState('');

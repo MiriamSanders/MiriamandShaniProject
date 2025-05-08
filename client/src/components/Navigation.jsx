@@ -1,6 +1,7 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useContext, useState } from 'react';
 import { UserContext } from './context';
+import { FaHome } from 'react-icons/fa';
 import '../css/navigation.css'
 
 const Navigation = () => {
@@ -37,7 +38,7 @@ const Navigation = () => {
             <nav className="navigation">
                 <button className="nav-button" onClick={handleBack}>↪️</button>
                 <Link to={`/users/${user ? user.id : 'guest'}/home`}>
-                    <button className="nav-button">🏠</button>
+                    <button className="nav-button"> <FaHome style={{fontSize:"1rem"}} /></button>
                 </Link>
                 <Link to={`/users/${user ? user.id : 'guest'}/posts`}>
                     <button className="nav-button">Posts</button>

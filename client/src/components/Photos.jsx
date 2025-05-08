@@ -5,7 +5,7 @@ import { UserContext } from './context';
 import { Link, useLocation } from 'react-router-dom';
 import Delete from "./Delete";
 import EditItem from "./EditItem";
-
+import { FaEdit } from 'react-icons/fa';
 const Photos = () => {
     const [photos, setPhotos] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -21,7 +21,7 @@ const Photos = () => {
         { name: "url", inputType: "text" }
     ];
 
-    const initialObject = { userId: user.id, albumId: album.id };
+    const initialObject = { albumId: album.id };
 
     useEffect(() => {
         fetchPhotos();
@@ -84,7 +84,7 @@ const Photos = () => {
                         <div key={photo.id} className="photo-item">
                             <img src={photo.url} alt={photo.title} className="photo-img" />
                             <p className="photo-title">{photo.title}</p>
-                            <button onClick={() => setEditingPhotoId(photo.id)}>✏️ Edit</button>
+                            <button onClick={() => setEditingPhotoId(photo.id)}><FaEdit/> Edit</button>
                             <Delete setMyItem={setPhotos} id={photo.id} type="photos" />
                         </div>
                     ))}

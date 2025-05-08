@@ -1,5 +1,5 @@
 const express = require("express");
-const { GenericGet, GenericPost, GenericPut } = require("../../DL/genericDL");
+const { GenericGet, GenericPost, GenericPut,GenericDelete } = require("../../DL/genericDL");
 const router = express.Router();
 router.get('/', async (req, res) => {
     try {
@@ -31,15 +31,28 @@ router.post('/', async (req, res) => {
 );
 router.put('/:id', async (req, res) => {
     try {
-        const affectedRows = await GenericPut("photos", req.params.id, req.body);
-        if (affectedRows === 0) {
+        const updatedPhoto = await GenericPut("photos", req.params.id, req.body);
+        if (!updatedPhoto) {
             return res.status(404).json({ error: "Photo not found" });
         }
-        res.status(200).json({ message: "Photo updated successfully" });
+        res.status(200).json(updatedPhoto);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: "Internal server error" });
     }
 }
 );
+router.delete('/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const deletedPhoto = await GenericDelete("photos", id);
+        if (!deletedPhoto) {
+            return res.status(404).json({ message: 'photo not found' });
+        }
+        res.status(200).json({ message: 'photo deleted successfully' });
+    } catch (err) {
+        console.error('Error deleting photo:', err);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
 module.exports = router

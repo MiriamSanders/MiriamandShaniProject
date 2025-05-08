@@ -3,7 +3,7 @@ import { UserContext } from './context';
 import Delete from './Delete';
 import Comments from './Comments';
 import EditItem from './EditItem';
-
+import { FaEdit } from 'react-icons/fa';
 const Post = ({ post, setPosts, setSelectedPost }) => {
     const { user } = useContext(UserContext);
     const [isEditing, setIsEditing] = useState(false);
@@ -37,7 +37,7 @@ const Post = ({ post, setPosts, setSelectedPost }) => {
                                     dependents={{ son: "comments", father: "post" }}
                                 />
                             </div>
-                            <div onClick={() => setIsEditing(true)}>✏️</div>
+                            <div onClick={() => setIsEditing(true)}><FaEdit/></div>
                         </div>
                     )}
                 </>
