@@ -28,6 +28,8 @@ body {
   min-width: 320px;
   min-height: 100vh;
   background-image: url("./pictures/homePageBackground.jpg");
+  background-color: rgba(0, 0, 0, 0.1);
+  background-blend-mode: overlay;
   background-repeat: no-repeat;
   background-size: cover;
 }
