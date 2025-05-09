@@ -46,7 +46,7 @@ function Comments({ postId }) {
       </div>
 
       {loading ? (
-        <p>Loading comments...</p>
+        <p className='loading'>Loading comments...</p>
       ) : (
         comments.map((comment) => (
           <div key={comment.id} className="comment">

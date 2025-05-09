@@ -6,8 +6,24 @@ const Home = () => {
 
   return (
     <div className='userName'>
-      <div><div className="animated-title">Welcome to  {user ? user.name : "Guest user"}'s Dashboard</div><h1 className="welcome-message">Welcome to our website! your one-stop platform for managing todos, sharing posts, exploring albums, engaging with comments, and viewing user data! Whether you're staying organized, expressing your thoughts, or browsing memories, we've got you covered.</h1></div>
-
+      <div>
+        <div className="animated-title">
+          Welcome to {user ? user.name : "Guest user"}'s Dashboard
+        </div>
+        <h1 className="welcome-message">
+          Welcome to our website!                                Your one-stop platform for:
+        </h1>
+        <div className="features-list">
+          <div>Managing todos</div>
+          <div>Sharing posts</div>
+          <div>Exploring albums</div>
+          <div>Engaging with comments</div>
+          <div>Viewing user data</div>
+        </div>
+        <p className="closing-message">
+          Whether you're staying organized, expressing your thoughts, or browsing memories, we've got you covered.
+        </p>
+      </div>
     </div>
   );
 };

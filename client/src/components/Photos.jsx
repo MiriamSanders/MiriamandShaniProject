@@ -88,7 +88,7 @@ const Photos = () => {
                             <Delete setMyItem={setPhotos} id={photo.id} type="photos" />
                         </div>
                     ))}
-                    {loading && <div>Loading more photos...</div>}
+                    {loading && <div className='loading'>Loading more photos...</div>}
                 </div>
                 {hasMore ? <button onClick={loadPhotos}>Load More</button> : <div>No More Photos</div>}
             </div>

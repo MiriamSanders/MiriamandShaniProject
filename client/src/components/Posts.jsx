@@ -75,7 +75,7 @@ const Posts = () => {
               <h3>{post.title}</h3>
             </div>
           ))}
-          {loading && <p>Loading more posts...</p>}
+          {loading && <p className='loading'>Loading more posts...</p>}
         </div>
 
         <div className="post-details">
