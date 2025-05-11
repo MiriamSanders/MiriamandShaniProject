@@ -34,7 +34,7 @@ const Photos = () => {
             const response = await fetch(`http://localhost:3012/photos?albumId=${album.id}&&_page=${page}&&limit=10`, {
                 method: 'GET',
                 headers: {
-                  'Authorization': 'Bearer ' + localStorage.getItem("userToken"), // Add your JWT token here
+                  'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('userToken')), // Add your JWT token here
                   'Content-Type': 'application/json'
                 }
               });

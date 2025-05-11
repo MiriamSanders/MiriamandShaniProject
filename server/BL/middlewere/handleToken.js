@@ -4,7 +4,7 @@ const router = express.Router();
 require('dotenv').config({ path:  '../../../.env'} );
 const SALT_ROUNDS = 10;
 const generateAccessToken = (user) => {
-    return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' });
+    return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '24h' });
 };
 const authenticateToken = (auth) => {
     
@@ -17,6 +17,8 @@ const authenticateToken = (auth) => {
         const user = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
         return user;
     } catch (err) {
+        console.log('Token verification error:', err);
+        
         return false;
     }
 };

@@ -17,7 +17,7 @@ const Albums = () => {
     fetch(`http://localhost:3012/albums?userId=${user.id}`, {
       method: 'GET',
       headers: {
-        'Authorization': 'Bearer ' + localStorage.getItem("userToken"), // Add your JWT token here
+        'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('userToken')), // Add your JWT token here
         'Content-Type': 'application/json'
       }
     })

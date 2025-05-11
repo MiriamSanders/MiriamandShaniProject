@@ -26,7 +26,7 @@ const Posts = () => {
       const response = await fetch(`http://localhost:3012/posts`, {
         method: 'GET',
         headers: {
-          'Authorization': 'Bearer ' + localStorage.getItem("userToken"), // Add your JWT token here
+          'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('userToken')), // Add your JWT token here
           'Content-Type': 'application/json'
         }
       });

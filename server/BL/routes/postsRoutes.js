@@ -1,6 +1,7 @@
 const express = require("express");
 const { GenericPost, GenericPut, CascadeDelete } = require("../../DL/genericDL");
 const { getPosts } = require("../../DL/postDL");
+const { authenticateToken } = require("../middlewere/handleToken");
 //const dbPromise = require("../../dbConnection");
 const router = express.Router();
 // New GET route using the imported getPosts function

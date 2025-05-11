@@ -27,7 +27,7 @@ const AddItem = ({ fields, initialObject, type, setData }) => {
       const response = await fetch(`http://localhost:3012/${type}`, {
         method: "POST",
         headers: {
-          'Authorization': 'Bearer ' + localStorage.getItem('userToken'),
+          'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('userToken')),
           "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),

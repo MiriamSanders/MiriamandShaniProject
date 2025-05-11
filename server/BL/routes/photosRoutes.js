@@ -1,5 +1,6 @@
 const express = require("express");
 const { GenericGet, GenericPost, GenericPut,GenericDelete } = require("../../DL/genericDL");
+const { authenticateToken } = require("../middlewere/handleToken");
 const router = express.Router();
 router.get('/', async (req, res) => {
     try {

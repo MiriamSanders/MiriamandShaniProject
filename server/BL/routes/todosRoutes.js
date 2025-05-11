@@ -1,6 +1,6 @@
 const express = require("express");
 const { GenericGet, GenericPost, GenericPut, GenericDelete } = require("../../DL/genericDL");
-//const dbPromise = require("../../dbConnection");
+const { authenticateToken } = require("../middlewere/handleToken");
 const router = express.Router();
 // New GET route using the imported getTodos function
 router.get('/', async (req, res) => {

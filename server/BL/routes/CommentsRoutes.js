@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { GenericGet, GenericPost, GenericPut, GenericDelete } = require("../../DL/genericDL");
+const { authenticateToken } = require("../middlewere/handleToken");
 router.get('/', async(req, res) => {
     try {
         const user=authenticateToken(req.headers.authorization);
