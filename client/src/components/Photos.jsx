@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
+import {useNavigate} from 'react-router-dom';
 import '../css/photos.css';
 import AddItem from "./AddItem";
 import { UserContext } from './context';
@@ -15,7 +16,7 @@ const Photos = () => {
     const { user } = useContext(UserContext);
     const location = useLocation();
     const album = location.state?.album;
-
+const navigate = useNavigate();
     const fields = [
         { name: "title", inputType: "text" },
         { name: "url", inputType: "text" }
@@ -34,10 +35,14 @@ const Photos = () => {
             const response = await fetch(`http://localhost:3012/photos?albumId=${album.id}&&_page=${page}&&limit=10`, {
                 method: 'GET',
                 headers: {
-                  'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('userToken')), // Add your JWT token here
-                  'Content-Type': 'application/json'
+                    'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('userToken')), // Add your JWT token here
+                    'Content-Type': 'application/json'
                 }
-              });
+            });
+            if (response.status === 401) {
+                localStorage.removeItem("user");
+                navigate("/login");
+            }
             const result = await response.json();
             const newPhotos = result.filter((photo) =>
                 !photos.some((existingPhoto) => existingPhoto.id === photo.id)
@@ -88,7 +93,7 @@ const Photos = () => {
                         <div key={photo.id} className="photo-item">
                             <img src={photo.url} alt={photo.title} className="photo-img" />
                             <p className="photo-title">{photo.title}</p>
-                            <button onClick={() => setEditingPhotoId(photo.id)}><FaEdit/> Edit</button>
+                            <button onClick={() => setEditingPhotoId(photo.id)}><FaEdit /> Edit</button>
                             <Delete setMyItem={setPhotos} id={photo.id} type="photos" />
                         </div>
                     ))}

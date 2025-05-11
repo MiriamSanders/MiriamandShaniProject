@@ -1,9 +1,10 @@
 import React, { useState } from "react";
+import {useNavigate} from 'react-router-dom';
 import "../css/editItem.css";
 
 const EditItem = ({ item, fields, type, setData, setIsEditing, setView = (x) => { } }) => {
   const [formData, setFormData] = useState(item);
-
+const navigate = useNavigate();
   const handleChange = (field, value) => {
     setFormData((prev) => ({
       ...prev,
@@ -20,12 +21,15 @@ const EditItem = ({ item, fields, type, setData, setIsEditing, setView = (x) => 
       const response = await fetch(`http://localhost:3012/${type}/${item.id}`, {
         method: "PUT",
         headers: {
-          'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('userToken')) ,
+          'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('userToken')),
           "Content-Type": "application/json",
         },
         body: JSON.stringify(filteredFormData),
       });
-
+      if (response.status === 401) {
+        localStorage.removeItem("user");
+        navigate("/login");
+      }
       if (!response.ok) {
         throw new Error("Failed to update item");
       }

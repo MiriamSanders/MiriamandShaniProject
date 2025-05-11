@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
+import {useNavigate} from 'react-router-dom';
 import AddItem from './AddItem';
 import Delete from './Delete';
 import { UserContext } from './context';
@@ -15,23 +16,32 @@ const Todos = () => {
   const [isEditing, setIsEditing] = useState(null);
   const fields = [{ name: "body", inputType: "text" }];
   const initialObject = { userId: user.id, completed: false };
-
+const navigate = useNavigate();
   useEffect(() => {
     fetch(`http://localhost:3012/todos`, {
       method: 'GET',
       headers: {
-        'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('userToken')), // Add your JWT token here
-        'Content-Type': 'application/json'
+      'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('userToken')), // Add your JWT token here
+      'Content-Type': 'application/json'
       }
     })
-      .then(response => response.json())
+      .then(response => {
+      if (response.status === 401) {
+        localStorage.removeItem("user");
+        navigate("/login");
+        return;
+      }
+      return response.json();
+      })
       .then(json => {
+      if (json) {
         setMyTodos(json);
         setLoading(false);
+      }
       })
       .catch(error => {
-        console.error('Error fetching tasks:', error);
-        setLoading(false);
+      console.error('Error fetching tasks:', error);
+      setLoading(false);
       });
   }, [user.id]);
 
@@ -42,17 +52,26 @@ const Todos = () => {
       );
       return updatedTodos;
     });
-
     fetch(`http://localhost:3012/todos/${taskId}`, {
       method: 'PUT',
       headers: {
-        'Content-Type': 'application/json',
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('userToken')),
       },
       body: JSON.stringify({
-        ...myTodos.find(todo => todo.id === taskId),
-        completed: !myTodos.find(todo => todo.id === taskId).completed,
+      ...myTodos.find(todo => todo.id === taskId),
+      completed: !myTodos.find(todo => todo.id === taskId).completed,
       }),
-    }).catch(err => console.error('Error updating task:', err));
+    })
+    .then(response => {
+      if (response.status === 401) {
+      localStorage.removeItem("user");
+      navigate("/login");
+      return;
+      }
+      return response.json();
+    })
+    .catch(err => console.error('Error updating task:', err));
   };
 
   const sortTodos = (todos) => {

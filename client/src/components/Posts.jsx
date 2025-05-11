@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
+import {useNavigate} from 'react-router-dom';
 import Post from "./Post";
 import '../css/posts.css';
 import { UserContext } from './context';
@@ -14,7 +15,7 @@ const Posts = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const postFields = [{ name: "title", inputType: "text" }, { name: "body", inputType: "textArea" }];
   const initialObject = { userId: user?.id };
-
+const navigate = useNavigate();
   useEffect(() => {
     fetchPosts()
   }, [user?.id]);
@@ -30,6 +31,10 @@ const Posts = () => {
           'Content-Type': 'application/json'
         }
       });
+      if (response.status === 401) {
+        localStorage.removeItem("user");
+        navigate("/login");
+      }
       const data = await response.json();
       setPosts(data);
     } catch (error) {

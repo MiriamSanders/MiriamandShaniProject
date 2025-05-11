@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
+import {useNavigate} from 'react-router-dom';
 import { UserContext } from "./context";
 import Delete from "./Delete";
 import AddItem from "./AddItem";
@@ -10,7 +11,7 @@ function Comments({ postId }) {
   const { user } = useContext(UserContext);
   const [isEditing, setIsEditing] = useState(null);
   const [editedComment, setEditedComment] = useState(null);
-
+const navigate = useNavigate();
   useEffect(() => {
     fetchComments();
   }, [postId]);
@@ -20,12 +21,16 @@ function Comments({ postId }) {
 
     try {
       const response = await fetch(`http://localhost:3012/comments?postId=${postId}`, {
-  method: 'GET',
-  headers: {
-    'Authorization': 'Bearer ' +JSON.parse(localStorage.getItem('userToken')), // Add your JWT token here
-    'Content-Type': 'application/json'
-  }
-});
+        method: 'GET',
+        headers: {
+          'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('userToken')), // Add your JWT token here
+          'Content-Type': 'application/json'
+        }
+      });
+      if (response.status === 401) {
+        localStorage.removeItem("user");
+        navigate("/login");
+      }
       const data = await response.json();
       setComments(data);
     } catch (error) {
@@ -45,7 +50,7 @@ function Comments({ postId }) {
       <div className="add-comment-button">
         <AddItem
           fields={[{ name: "body", inputType: "textArea" }]}
-          initialObject={{ postId, body: "", email: user?.email || "unknown",name: user?.userName || "unknown" }}
+          initialObject={{ postId, body: "", email: user?.email || "unknown", name: user?.userName || "unknown" }}
           type="comments"
           setData={setComments}
         />
@@ -65,7 +70,7 @@ function Comments({ postId }) {
                 {comment.email === user?.email && (
                   <>
                     <Delete setMyItem={setComments} id={comment.id} type="comments" />
-                    <div onClick={() => handleEdit(comment)}><FaEdit/></div>
+                    <div onClick={() => handleEdit(comment)}><FaEdit /></div>
                   </>
                 )}
               </>

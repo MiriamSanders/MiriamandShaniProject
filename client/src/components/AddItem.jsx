@@ -1,11 +1,12 @@
 import React, { useState } from "react";
+import {useNavigate} from 'react-router-dom';
 import "../css/addItem.css";
 
 const AddItem = ({ fields, initialObject, type, setData }) => {
   const [formData, setFormData] = useState(initialObject);
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-
+  const navigate = useNavigate();
   const handleChange = (field, value) => {
     setFormData((prev) => ({
       ...prev,
@@ -32,6 +33,10 @@ const AddItem = ({ fields, initialObject, type, setData }) => {
         },
         body: JSON.stringify(formData),
       });
+      if (response.status === 401) {
+        localStorage.removeItem("user");
+        navigate("/login");
+      }
 
       if (!response.ok) {
         throw new Error("Failed to add item");

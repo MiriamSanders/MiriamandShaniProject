@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { UserContext } from './context';
-import { Link } from 'react-router-dom';
+import { Link ,useNavigate} from 'react-router-dom';
 import AddItem from './AddItem';
 import Delete from './Delete';
 import '../css/album.css';
@@ -11,7 +11,7 @@ const Albums = () => {
   const { user } = useContext(UserContext);
   const fields = [{ name: "title", inputType: "text" }];
   const initialObject = { userId: user.id };
-
+  const navigate = useNavigate();
   useEffect(() => {
     setLoading(true);
     fetch(`http://localhost:3012/albums`, {
@@ -21,9 +21,17 @@ const Albums = () => {
         'Content-Type': 'application/json'
       }
     })
-      .then(response => response.json())
+      .then(response => {
+        if (response.status === 401) {
+          localStorage.removeItem("user");
+         navigate("/login");
+        }
+        return response.json();
+      })
       .then(json => {
-        setAlbums(json);
+        if (json) {
+          setAlbums(json);
+        }
         setLoading(false);
       })
       .catch(error => {
