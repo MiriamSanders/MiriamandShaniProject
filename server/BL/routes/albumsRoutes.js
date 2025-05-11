@@ -1,11 +1,10 @@
 const express = require("express");
 const { GenericGet, GenericPost, GenericPut, CascadeDelete } = require("../../DL/genericDL");
-const {authenticateToken}=require("../middlewere/handleToken")
+const { authenticateToken } = require("../middlewere/handleToken")
 const router = express.Router();
 router.get('/', async (req, res) => {
     try {
-        const user=authenticateToken(req.headers.authorization);
-        console.log(user);
+        const user = authenticateToken(req.headers.authorization);
         if (!user) {
             return res.status(401).json({ error: "Unauthorized" });
         }
@@ -20,10 +19,10 @@ router.get('/', async (req, res) => {
     }
 }
 );
+
 router.put(':id', async (req, res) => {
     try {
-        const user=authenticateToken(req.headers.authorization);
-        console.log(user);
+        const user = authenticateToken(req.headers.authorization);
         if (!user) {
             return res.status(401).json({ error: "Unauthorized" });
         }
@@ -38,36 +37,32 @@ router.put(':id', async (req, res) => {
     }
 }
 );
+
 router.post('/', async (req, res) => {
     try {
-        const user=authenticateToken(req.headers.authorization);
-        console.log(user);
+        const user = authenticateToken(req.headers.authorization);
         if (!user) {
             return res.status(401).json({ error: "Unauthorized" });
         }
         const album = await GenericPost("albums", req.body);
-        console.log(album);
-        if (!album|| album.length === 0) {
+        if (!album || album.length === 0) {
             return res.status(400).json({ error: "Failed to create album" });
         }
-        res.status(201).json( album ); // Access the insertId from the result
+        res.status(201).json(album);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: "Internal server error" });
     }
 }
 );
+
 router.delete("/:id", async (req, res) => {
     try {
-        const user=authenticateToken(req.headers.authorization);
-        console.log(user);
+        const user = authenticateToken(req.headers.authorization);
         if (!user) {
             return res.status(401).json({ error: "Unauthorized" });
         }
         const affectedRows = await CascadeDelete("albums", req.params.id, "photos", "albumId");
-        if (affectedRows === 0) {
-            return res.status(404).json({ error: "Album not found" });
-        }
         if (affectedRows === 0) {
             return res.status(404).json({ error: "Album not found" });
         }
@@ -77,4 +72,5 @@ router.delete("/:id", async (req, res) => {
         res.status(500).json({ error: "Internal server error" });
     }
 });
+
 module.exports = router;

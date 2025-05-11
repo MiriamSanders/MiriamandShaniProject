@@ -5,7 +5,6 @@ const router = express.Router();
 router.get('/', async (req, res) => {
     try {
         const user=authenticateToken(req.headers.authorization);
-        console.log(user);
         if (!user) {
             return res.status(401).json({ error: "Unauthorized" });
         }
@@ -17,7 +16,6 @@ router.get('/', async (req, res) => {
         if (!photos || photos.length === 0) {
             return res.status(200).json([]);
         }
-        console.log(photos);
         res.status(200).json(photos);
     } catch (error) {
         console.error(error);
@@ -28,7 +26,6 @@ router.get('/', async (req, res) => {
 router.post('/', async (req, res) => {
     try {
         const user=authenticateToken(req.headers.authorization);
-        console.log(user);
         if (!user) {
             return res.status(401).json({ error: "Unauthorized" });
         }
@@ -43,7 +40,6 @@ router.post('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
     try {
         const user=authenticateToken(req.headers.authorization);
-        console.log(user);
         if (!user) {
             return res.status(401).json({ error: "Unauthorized" });
         }
@@ -61,7 +57,6 @@ router.put('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
     try {
         const user=authenticateToken(req.headers.authorization);
-        console.log(user);
         if (!user) {
             return res.status(401).json({ error: "Unauthorized" });
         }

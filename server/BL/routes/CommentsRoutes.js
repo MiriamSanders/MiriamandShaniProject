@@ -4,8 +4,7 @@ const { GenericGet, GenericPost, GenericPut, GenericDelete } = require("../../DL
 const { authenticateToken } = require("../middlewere/handleToken");
 router.get('/', async(req, res) => {
     try {
-        const user=authenticateToken(req.headers.authorization);
-        console.log(user);
+        const user=authenticateToken(req.headers.authorization)
         if (!user) {
             return res.status(401).json({ error: "Unauthorized" });
         }
@@ -19,24 +18,24 @@ router.get('/', async(req, res) => {
         res.status(500).json({ error: "Internal server error" });
     }
 });
+
 router.post('/', async (req, res) => {
     try {
         const user=authenticateToken(req.headers.authorization);
-        console.log(user);
         if (!user) {
             return res.status(401).json({ error: "Unauthorized" });
         }
         const comment= await GenericPost("comments", req.body);
-        res.status(201).json( comment); // Access the insertId from the result
+        res.status(201).json( comment); 
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: "Internal server error" });
     }
 });
+
 router.put('/:id', async (req, res) => {
     try {
         const user=authenticateToken(req.headers.authorization);
-        console.log(user);
         if (!user) {
             return res.status(401).json({ error: "Unauthorized" });
         }
@@ -50,10 +49,10 @@ router.put('/:id', async (req, res) => {
         res.status(500).json({ error: "Internal server error" });
     }
 });
+
 router.delete('/:id', async (req, res) => {
     try {
         const user=authenticateToken(req.headers.authorization);
-        console.log(user);
         if (!user) {
             return res.status(401).json({ error: "Unauthorized" });
         }

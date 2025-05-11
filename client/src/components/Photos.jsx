@@ -39,8 +39,6 @@ const Photos = () => {
                 }
               });
             const result = await response.json();
-            console.log(result);
-            
             const newPhotos = result.filter((photo) =>
                 !photos.some((existingPhoto) => existingPhoto.id === photo.id)
             );

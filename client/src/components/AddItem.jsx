@@ -38,7 +38,6 @@ const AddItem = ({ fields, initialObject, type, setData }) => {
       }
 
       const newItem = response.headers.get("Content-Length") !== "0" ? await response.json() : {};
-      console.log(newItem);
       setData((prev) => [newItem, ...prev]);
       setIsOpenModal(false);
       setFormData({});

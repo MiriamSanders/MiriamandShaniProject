@@ -70,7 +70,7 @@ async function main() {
     FOREIGN KEY (albumId) REFERENCES ALBUMS(id)
 );`);
         await db.query(`CREATE TABLE IF NOT EXISTS LOGS(
-        timestamp VARCHAR(225) NOT NULL,
+        timestamp DATETIME NOT NULL,
         table VARCHAR(30),
         itemId INT,
         action VARCHAR(225)) NOT NULL;`);
@@ -144,11 +144,11 @@ async function main() {
             }
         }
 
-        console.log("✅ Fake data inserted successfully!");
+        console.log("Fake data inserted successfully!");
         await db.end();
 
     } catch (error) {
-        console.error("❌ ERROR:", error);
+        console.error(" ERROR:", error);
     } finally {
 
     }

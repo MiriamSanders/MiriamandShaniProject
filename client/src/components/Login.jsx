@@ -16,7 +16,6 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      console.log('Login attempt:', userLogin);
       const response = await fetch(`http://localhost:3012/registration/login`, {
         method: 'POST',
         headers: {
@@ -25,11 +24,8 @@ const Login = () => {
       body: JSON.stringify(userLogin),
       });
       const {user,token} = await response.json();
-      console.log('Login response:', user);
       if (user.length > 0) {
         const foundUser = user[0];
-        console.log('Found user:', foundUser);
-        
         if (foundUser) {
           localStorage.setItem('user', JSON.stringify(foundUser));
           localStorage.setItem('userToken',JSON.stringify(token));

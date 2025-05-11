@@ -3,7 +3,7 @@ const dbPromise = require("../dbConnection");
 
 async function getPosts() {
     try {
-        const db = await dbPromise; // Get the database connection
+        const db = await dbPromise; 
         const query = mysql.format(`
         SELECT * 
         FROM posts 
@@ -11,7 +11,7 @@ async function getPosts() {
     `);
         const [rows] = await db.execute(query);
         if (rows.length === 0) {
-            return null; // No rows found
+            return null; 
         }
         return rows;
     }catch (error) {

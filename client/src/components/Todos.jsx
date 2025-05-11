@@ -17,7 +17,7 @@ const Todos = () => {
   const initialObject = { userId: user.id, completed: false };
 
   useEffect(() => {
-    fetch(`http://localhost:3012/todos?userId=${user.id}`, {
+    fetch(`http://localhost:3012/todos`, {
       method: 'GET',
       headers: {
         'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('userToken')), // Add your JWT token here
@@ -99,10 +99,6 @@ const Todos = () => {
         </select>
 
         <ul>
-          {
-            console.log(myTodos)
-            
-          }
           {sortTodos(myTodos)
             .filter(task =>
               task.body.toLowerCase().includes(search.toLowerCase()) ||

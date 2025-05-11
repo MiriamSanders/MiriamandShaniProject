@@ -1,11 +1,11 @@
-const dbPromise = require("../../dbConnection");
 require('dotenv').config({ path: '../.env' });
 const {generateAccessToken}=require("../middlewere/handleToken")
+const { GenericGet, GenericPost, writeToLog } = require("../../DL/genericDL");
 const express = require("express");
 const router = express.Router();
 const bcrypt = require('bcrypt');
 const SALT_ROUNDS=10;
-const { GenericGet, GenericPost, writeToLog } = require("../../DL/genericDL");
+
 router.post('/signup', async (req, res) => {
     const { password, ...userDetails } = req.body;
     if (!password || typeof password !== "string") {
@@ -25,10 +25,8 @@ router.post('/signup', async (req, res) => {
             password: hashedPassword
         });
         if (!userPassword) {
-          //  writeToLog({ "timestamp": new Date(), "action": "failed to add user" })
             throw new Error("Failed to save user password");
         }
-        console.log("User created:", user);
        // writeToLog({ "timestamp": new Date(), "action": "succeeded to add user" })//how to write succeeded?
       const token= generateAccessToken(user);
         return res.status(201).json({"user":user,"token":token});
@@ -45,9 +43,7 @@ router.post('/login', async (req, res) => {
         if (!user) {
             return res.status(404).json({ error: "User not found" });
         }
-        console.log("User found:", user);
         const userPassword = await GenericGet("userpassword", "userId", user[0].id);
-        console.log("User password:", await userPassword);
         if (!userPassword) {
             return res.status(404).json({ error: "Invalid user name or password" });
         }

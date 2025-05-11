@@ -14,7 +14,7 @@ const Albums = () => {
 
   useEffect(() => {
     setLoading(true);
-    fetch(`http://localhost:3012/albums?userId=${user.id}`, {
+    fetch(`http://localhost:3012/albums`, {
       method: 'GET',
       headers: {
         'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('userToken')), // Add your JWT token here
@@ -54,7 +54,6 @@ const Albums = () => {
       <AddItem fields={fields} initialObject={initialObject} setData={setAlbums} type={"albums"} />
 
       <div className="albums-grid">
-        {console.log(albums)};
         {albums.filter(album =>
           album.title.toLowerCase().includes(search.toLowerCase()) ||
           album.id.toString().includes(search)
