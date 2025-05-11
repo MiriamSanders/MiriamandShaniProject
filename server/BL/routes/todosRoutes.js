@@ -5,8 +5,13 @@ const router = express.Router();
 // New GET route using the imported getTodos function
 router.get('/', async (req, res) => {
     try {
-        const userId = req.query.userId;
-        const todos = await GenericGet("todos", "userId", userId); // Pass table name and userId to GenericGet
+        const user=authenticateToken(req.headers.authorization);
+        console.log(user);
+        if (!user) {
+            return res.status(401).json({ error: "Unauthorized" });
+        }
+      //  const userId = req.query.userId;
+        const todos = await GenericGet("todos", "userId", user.id); // Pass table name and userId to GenericGet
         if (!todos || todos.length === 0) {
             return res.status(200).json([]);
         }
@@ -19,6 +24,11 @@ router.get('/', async (req, res) => {
 
 router.put('/:id', async (req, res) => {
     try {
+        const user=authenticateToken(req.headers.authorization);
+        console.log(user);
+        if (!user) {
+            return res.status(401).json({ error: "Unauthorized" });
+        }
         const { id } = req.params;
         const updatedData = req.body; // Get all the data from the request body
 
@@ -37,6 +47,11 @@ router.put('/:id', async (req, res) => {
 });
 router.post('/', async (req, res) => {
     try {
+        const user=authenticateToken(req.headers.authorization);
+        console.log(user);
+        if (!user) {
+            return res.status(401).json({ error: "Unauthorized" });
+        }
         const { userId, body, completed } = req.body;
 
         // Use GenericPost to insert a new todo
@@ -55,6 +70,11 @@ router.post('/', async (req, res) => {
 
 router.delete('/:id', async (req, res) => {
     try {
+        const user=authenticateToken(req.headers.authorization);
+        console.log(user);
+        if (!user) {
+            return res.status(401).json({ error: "Unauthorized" });
+        }
         const { id } = req.params;
 
         // Use GenericDelete to delete the todo

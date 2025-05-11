@@ -31,7 +31,13 @@ const Photos = () => {
         if (loading) return;
         setLoading(true);
         try {
-            const response = await fetch(`http://localhost:3012/photos?albumId=${album.id}&&_page=${page}&&limit=10`);
+            const response = await fetch(`http://localhost:3012/photos?albumId=${album.id}&&_page=${page}&&limit=10`, {
+                method: 'GET',
+                headers: {
+                  'Authorization': 'Bearer ' + localStorage.getItem("userToken"), // Add your JWT token here
+                  'Content-Type': 'application/json'
+                }
+              });
             const result = await response.json();
             console.log(result);
             

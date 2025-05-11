@@ -3,6 +3,11 @@ const { GenericGet, GenericPost, GenericPut,GenericDelete } = require("../../DL/
 const router = express.Router();
 router.get('/', async (req, res) => {
     try {
+        const user=authenticateToken(req.headers.authorization);
+        console.log(user);
+        if (!user) {
+            return res.status(401).json({ error: "Unauthorized" });
+        }
         const { albumId, limit, _page } = req.query;
         const numericLimit = limit ? parseInt(limit) : undefined;
         const page = _page ? parseInt(_page) : 1;
@@ -21,6 +26,11 @@ router.get('/', async (req, res) => {
 );
 router.post('/', async (req, res) => {
     try {
+        const user=authenticateToken(req.headers.authorization);
+        console.log(user);
+        if (!user) {
+            return res.status(401).json({ error: "Unauthorized" });
+        }
         const photo = await GenericPost("photos", req.body);
         res.status(201).json(photo); // Access the insertId from the result
     } catch (error) {
@@ -31,6 +41,11 @@ router.post('/', async (req, res) => {
 );
 router.put('/:id', async (req, res) => {
     try {
+        const user=authenticateToken(req.headers.authorization);
+        console.log(user);
+        if (!user) {
+            return res.status(401).json({ error: "Unauthorized" });
+        }
         const updatedPhoto = await GenericPut("photos", req.params.id, req.body);
         if (!updatedPhoto) {
             return res.status(404).json({ error: "Photo not found" });
@@ -44,6 +59,11 @@ router.put('/:id', async (req, res) => {
 );
 router.delete('/:id', async (req, res) => {
     try {
+        const user=authenticateToken(req.headers.authorization);
+        console.log(user);
+        if (!user) {
+            return res.status(401).json({ error: "Unauthorized" });
+        }
         const { id } = req.params;
         const deletedPhoto = await GenericDelete("photos", id);
         if (!deletedPhoto) {

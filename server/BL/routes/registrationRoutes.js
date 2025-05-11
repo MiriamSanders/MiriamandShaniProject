@@ -1,8 +1,11 @@
 const dbPromise = require("../../dbConnection");
 require('dotenv').config({ path: '../.env' });
+const {generateAccessToken}=require("../middlewere/handleToken")
 const express = require("express");
+const router = express.Router();
 const bcrypt = require('bcrypt');
-const { GenericGet, GenericPost } = require("../../DL/genericDL");
+const SALT_ROUNDS=10;
+const { GenericGet, GenericPost, writeToLog } = require("../../DL/genericDL");
 router.post('/signup', async (req, res) => {
     const { password, ...userDetails } = req.body;
     if (!password || typeof password !== "string") {
@@ -21,15 +24,19 @@ router.post('/signup', async (req, res) => {
             userId: user.id,
             password: hashedPassword
         });
-        if (!userPassword) throw new Error("Failed to save user password");
+        if (!userPassword) {
+          //  writeToLog({ "timestamp": new Date(), "action": "failed to add user" })
+            throw new Error("Failed to save user password");
+        }
         console.log("User created:", user);
-        return res.status(201).json(user);
+       // writeToLog({ "timestamp": new Date(), "action": "succeeded to add user" })//how to write succeeded?
+      const token= generateAccessToken(user);
+        return res.status(201).json({"user":user,"token":token});
     } catch (error) {
         console.error("Signup error:", error.message);
         return res.status(500).json({ error: "Internal server error" });
     }
 });
-
 
 router.post('/login', async (req, res) => {
     const { userName, password } = req.body;
@@ -48,8 +55,9 @@ router.post('/login', async (req, res) => {
         if (!isMatch) {
             return res.status(401).json({ error: "Invalid user name or password" });
         }
-
-        return res.status(200).json(user);
+       // writeToLog({ "timestamp": new Date(), "action": "login success", "itemID": user.id });
+       const token= generateAccessToken(user[0]);
+       return res.status(200).json({"user":user,"token":token});
     } catch (error) {
         console.error("Login error:", error);
         return res.status(500).json({ error: "Internal server error" });

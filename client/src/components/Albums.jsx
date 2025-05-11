@@ -14,7 +14,13 @@ const Albums = () => {
 
   useEffect(() => {
     setLoading(true);
-    fetch(`http://localhost:3012/albums?userId=${user.id}`)
+    fetch(`http://localhost:3012/albums?userId=${user.id}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': 'Bearer ' + localStorage.getItem("userToken"), // Add your JWT token here
+        'Content-Type': 'application/json'
+      }
+    })
       .then(response => response.json())
       .then(json => {
         setAlbums(json);

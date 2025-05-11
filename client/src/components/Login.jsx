@@ -24,14 +24,15 @@ const Login = () => {
         }, 
       body: JSON.stringify(userLogin),
       });
-      const data = await response.json();
-      console.log('Login response:', data);
-      if (data.length > 0) {
-        const foundUser = data[0];
+      const {user,token} = await response.json();
+      console.log('Login response:', user);
+      if (user.length > 0) {
+        const foundUser = user[0];
         console.log('Found user:', foundUser);
         
         if (foundUser) {
           localStorage.setItem('user', JSON.stringify(foundUser));
+          localStorage.setItem('userToken',JSON.stringify(token));
           setUser(foundUser);
           navigate(`/users/${foundUser.id}/home`);
 

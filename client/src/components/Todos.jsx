@@ -17,7 +17,13 @@ const Todos = () => {
   const initialObject = { userId: user.id, completed: false };
 
   useEffect(() => {
-    fetch(`http://localhost:3012/todos?userId=${user.id}`)
+    fetch(`http://localhost:3012/albums?todos?userId=${user.id}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': 'Bearer ' + localStorage.getItem("userToken"), // Add your JWT token here
+        'Content-Type': 'application/json'
+      }
+    })
       .then(response => response.json())
       .then(json => {
         setMyTodos(json);

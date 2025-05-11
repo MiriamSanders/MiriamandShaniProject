@@ -69,6 +69,11 @@ async function main() {
     is_deleted BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (albumId) REFERENCES ALBUMS(id)
 );`);
+        await db.query(`CREATE TABLE IF NOT EXISTS LOGS(
+        timestamp VARCHAR(225) NOT NULL,
+        table VARCHAR(30),
+        itemId INT,
+        action VARCHAR(225)) NOT NULL;`);
 
         for (let i = 0; i < 5; i++) {
             const [result] = await db.query(`

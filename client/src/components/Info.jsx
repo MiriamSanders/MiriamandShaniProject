@@ -12,7 +12,7 @@ function Info() {
                 <strong>Name:</strong> {user.name}
             </div>
             <div>
-                <strong>User Name:</strong> {user.username}
+                <strong>User Name:</strong> {user.userName}
             </div>
             <div>
                 <strong>Email:</strong> {user.email}

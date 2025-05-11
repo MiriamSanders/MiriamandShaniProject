@@ -19,7 +19,13 @@ function Comments({ postId }) {
     setLoading(true);
 
     try {
-      const response = await fetch(`http://localhost:3012/comments?postId=${postId}`);
+      const response = awaitfetch(`http://localhost:3012/comments?postId=${postId}`, {
+  method: 'GET',
+  headers: {
+    'Authorization': 'Bearer ' +localStorage.getItem("userToken"), // Add your JWT token here
+    'Content-Type': 'application/json'
+  }
+});
       const data = await response.json();
       setComments(data);
     } catch (error) {

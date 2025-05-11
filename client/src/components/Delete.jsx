@@ -8,6 +8,7 @@ const Delete = (props) => {
         try {  await fetch(`http://localhost:3012/${props.type}/${itemId}`, {
                 method: 'DELETE',
                 headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('userToken') ,
                     'Content-Type': 'application/json',
                 },
             });

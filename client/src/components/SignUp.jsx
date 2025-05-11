@@ -45,11 +45,12 @@ function SignUp() {
             });
     
             if (response.status === 201) {
-                const newUser = await response.json();
+                const {user,token} = await response.json();
                 alert('User created successfully!');
-                setUser({ ...userDetails, id: newUser.id });
-                localStorage.setItem('user', JSON.stringify({ ...userDetails, id: newUser.id }));
-                navigate(`/users/${newUser.id}/info`);
+                setUser({ ...userDetails, id: user.id });
+                localStorage.setItem('user', JSON.stringify({ ...userDetails, id: user.id }));
+                localStorage.setItem('userToken',JSON.stringify(token));
+                navigate(`/users/${user.id}/info`);
             } else if (response.status === 409) {
                 setError('Username already exists');
             } else {

@@ -118,5 +118,9 @@ async function CascadeDelete(table, id, foreignKeyTable, foreignKeyColumn) {
         throw error;
     }
 }
-module.exports = { GenericGet, GenericPost, GenericPut, GenericDelete, CascadeDelete };
+async function writeToLog(data){
+    const logQuery=mysql.format(`INSERT INTO logs SET ?`,[data]);
+    await db.execute(logQuery);
+}
+module.exports = { GenericGet, GenericPost, GenericPut, GenericDelete, CascadeDelete,writeToLog };
 

@@ -6,6 +6,11 @@ const router = express.Router();
 // New GET route using the imported getPosts function
 router.get('/', async (req, res) => {
     try {
+        const user=authenticateToken(req.headers.authorization);
+        console.log(user);
+        if (!user) {
+            return res.status(401).json({ error: "Unauthorized" });
+        }
         const posts = await getPosts(); // Fetch posts from the database
         if (!posts || posts.length === 0) {
             return res.status(200).json([]);
@@ -19,6 +24,11 @@ router.get('/', async (req, res) => {
 
 router.post('/', async (req, res) => {
     try {
+        const user=authenticateToken(req.headers.authorization);
+        console.log(user);
+        if (!user) {
+            return res.status(401).json({ error: "Unauthorized" });
+        }
         const { userId, title, body } = req.body;
 
         // Use GenericPost to insert a new post
@@ -37,6 +47,11 @@ router.post('/', async (req, res) => {
 
 router.put('/:id', async (req, res) => {
     try {
+        const user=authenticateToken(req.headers.authorization);
+        console.log(user);
+        if (!user) {
+            return res.status(401).json({ error: "Unauthorized" });
+        }
         const { id } = req.params;
         const updatedData = req.body; // Get all the data from the request body
 
@@ -56,6 +71,11 @@ router.put('/:id', async (req, res) => {
 
 router.delete("/:id", async (req, res) => {
     try {
+        const user=authenticateToken(req.headers.authorization);
+        console.log(user);
+        if (!user) {
+            return res.status(401).json({ error: "Unauthorized" });
+        }
         const { id } = req.params;
 
         // Use CascadeDelete to delete the post and the post's comments

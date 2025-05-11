@@ -23,7 +23,13 @@ const Posts = () => {
     if (loading) return;
     setLoading(true);
     try {
-      const response = await fetch(`http://localhost:3012/posts`);
+      const response = await fetch(`http://localhost:3012/posts`, {
+        method: 'GET',
+        headers: {
+          'Authorization': 'Bearer ' + localStorage.getItem("userToken"), // Add your JWT token here
+          'Content-Type': 'application/json'
+        }
+      });
       const data = await response.json();
       setPosts(data);
     } catch (error) {
