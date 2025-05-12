@@ -1,12 +1,13 @@
 const mysql = require("mysql2/promise");
 require('dotenv').config({ path: '../.env' });
+const bcrypt = require('bcrypt');
 const { faker } = require('@faker-js/faker');
 async function main() {
     try {
         const db = await mysql.createConnection({
             host: process.env.DB_HOST,
             user: process.env.DB_USER,
-            // password: process.env.DB_PASSWORD,
+            password: process.env.DB_PASSWORD,
             database: process.env.DB_NAME,
             port: process.env.DB_PORT
         });
@@ -18,7 +19,6 @@ async function main() {
     email VARCHAR(255) NOT NULL UNIQUE,
     userName VARCHAR(255) NOT NULL UNIQUE,
     phone VARCHAR(20),
-    profilePicture VARCHAR(255),
     is_deleted BOOLEAN DEFAULT FALSE
 );`);
         await db.query(`CREATE TABLE IF NOT EXISTS USERPASSWORD (
@@ -69,29 +69,33 @@ async function main() {
     is_deleted BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (albumId) REFERENCES ALBUMS(id)
 );`);
+
         await db.query(`CREATE TABLE IF NOT EXISTS LOGS(
         timestamp DATETIME NOT NULL,
-        table VARCHAR(30),
+        \`table\` VARCHAR(30),
         itemId INT,
-        action VARCHAR(225)) NOT NULL;`);
+        action VARCHAR(225) NOT NULL
+        );`);
 
         for (let i = 0; i < 5; i++) {
             const [result] = await db.query(`
-            INSERT INTO USER (name, email, userName, phone, profilePicture)
-            VALUES (?, ?, ?, ?, ?)`, [
+            INSERT INTO USER (name, email, userName, phone)
+            VALUES (?, ?, ?, ?)`, [
                 faker.person.fullName(),
                 faker.internet.email(),
                 faker.internet.username(),
-                faker.phone.number('###-###-####'),
-                faker.image.avatar()
+                faker.phone.number('###-###-####')
             ]);
 
             const userId = result.insertId;
 
             // USERPASSWORD
+            const password = faker.internet.password();
+            const hashed_password = await bcrypt.hash(password, 10);
+            console.log(`Generated password for user ${userId}: ${password}`);
             await db.query(`INSERT INTO USERPASSWORD (userId, password) VALUES (?, ?)`, [
                 userId,
-                faker.internet.password()
+                hashed_password
             ]);
 
             // POSTS
