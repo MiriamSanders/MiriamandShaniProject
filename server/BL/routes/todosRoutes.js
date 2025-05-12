@@ -43,8 +43,8 @@ router.post('/', async (req, res) => {
         if (!user) {
             return res.status(401).json({ error: "Unauthorized" });
         }
-        const { userId, body, completed } = req.body;
-        const newTodo = await GenericPost("todos", { userId, body, completed });
+        const { body, completed } = req.body;
+        const newTodo = await GenericPost("todos", { "userId":user.id, body, completed });
         if (!newTodo) {
             return res.status(400).json({ message: 'Failed to create todo' });
         }

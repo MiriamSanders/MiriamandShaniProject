@@ -44,7 +44,7 @@ router.post('/', async (req, res) => {
         if (!user) {
             return res.status(401).json({ error: "Unauthorized" });
         }
-        const album = await GenericPost("albums", req.body);
+        const album = await GenericPost("albums",{...req.body,"userId":user.id});
         if (!album || album.length === 0) {
             return res.status(400).json({ error: "Failed to create album" });
         }

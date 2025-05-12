@@ -14,7 +14,7 @@ const Posts = () => {
   const [selectedPost, setSelectedPost] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const postFields = [{ name: "title", inputType: "text" }, { name: "body", inputType: "textArea" }];
-  const initialObject = { userId: user?.id };
+  const initialObject = { };
 const navigate = useNavigate();
   useEffect(() => {
     fetchPosts()

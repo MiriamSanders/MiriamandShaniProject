@@ -10,7 +10,7 @@ const Albums = () => {
   const [albums, setAlbums] = useState([]);
   const { user } = useContext(UserContext);
   const fields = [{ name: "title", inputType: "text" }];
-  const initialObject = { userId: user.id };
+  const initialObject = { };
   const navigate = useNavigate();
   useEffect(() => {
     setLoading(true);

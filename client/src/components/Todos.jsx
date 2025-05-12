@@ -15,7 +15,7 @@ const Todos = () => {
   const [sortOrder, setSortOrder] = useState('asc');
   const [isEditing, setIsEditing] = useState(null);
   const fields = [{ name: "body", inputType: "text" }];
-  const initialObject = { userId: user.id, completed: false };
+  const initialObject = { completed: false };
 const navigate = useNavigate();
   useEffect(() => {
     fetch(`http://localhost:3012/todos`, {

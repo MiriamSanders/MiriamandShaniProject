@@ -26,8 +26,8 @@ router.post('/', async (req, res) => {
         if (!user) {
             return res.status(401).json({ error: "Unauthorized" });
         }
-        const { userId, title, body } = req.body;
-        const newPost = await GenericPost("posts", { userId, title, body });
+        const {  title, body } = req.body;
+        const newPost = await GenericPost("posts", { "userId":user.id, title, body });
         if (!newPost) {
             return res.status(400).json({ message: 'Failed to create post' });
         }
