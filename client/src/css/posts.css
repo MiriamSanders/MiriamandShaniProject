@@ -247,9 +247,6 @@ textarea:focus {
   margin: 1em;
   background-color: #eae4e4;
   padding: 2px;
-}
-
-.comment {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -257,9 +254,7 @@ textarea:focus {
 
 .add-comment-button {
   align-self: flex-end;
-  /* המיקום ימוקם לצד ימין של התגובה */
   margin-top: 5px;
-  /* מרווח קטן מעל הכפתור */
   cursor: pointer;
   position: absolute;
   top: 40vw;

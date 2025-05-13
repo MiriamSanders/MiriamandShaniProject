@@ -10,7 +10,6 @@ function SignUp() {
         email: '',
         password: '',
         phone: '',
-        profilePicture: '',
         confirmPassword: '',
     });
 
@@ -135,17 +134,6 @@ function SignUp() {
                             name="phone"
                             value={formData.phone}
                             onChange={handleChange}
-                        />
-                    </div>
-
-                    <div className="form-group">
-                        <label>Profile Picture URL:</label>
-                        <input
-                            type="url"
-                            name="profilePicture"
-                            value={formData.profilePicture}
-                            onChange={handleChange}
-                            placeholder="https://example.com/image.jpg"
                         />
                     </div>
 
