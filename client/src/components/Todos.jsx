@@ -23,7 +23,8 @@ const navigate = useNavigate();
       headers: {
       'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('userToken')), // Add your JWT token here
       'Content-Type': 'application/json'
-      }
+      },
+      
     })
       .then(response => {
       if (response.status === 401) {

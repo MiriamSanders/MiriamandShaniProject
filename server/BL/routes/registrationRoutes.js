@@ -1,10 +1,10 @@
 require('dotenv').config({ path: '../.env' });
-const {generateAccessToken}=require("../middlewere/handleToken")
+const { generateAccessToken } = require("../middlewere/handleToken")
 const { GenericGet, GenericPost, writeToLog } = require("../../DL/genericDL");
 const express = require("express");
 const router = express.Router();
 const bcrypt = require('bcrypt');
-const SALT_ROUNDS=10;
+const SALT_ROUNDS = 10;
 
 router.post('/signup', async (req, res) => {
     const { password, ...userDetails } = req.body;
@@ -15,6 +15,7 @@ router.post('/signup', async (req, res) => {
     try {
         const existingUser = await GenericGet("user", "userName", userDetails.userName);
         if (existingUser) {
+            writeToLog({ "timestamp": new Date(), "action": "user add failed" })
             return res.status(409).json({ error: "User already exists" });
         }
         const user = await GenericPost("user", userDetails);
@@ -27,11 +28,12 @@ router.post('/signup', async (req, res) => {
         if (!userPassword) {
             throw new Error("Failed to save user password");
         }
-       // writeToLog({ "timestamp": new Date(), "action": "succeeded to add user" })//how to write succeeded?
-      const token= generateAccessToken(user);
-        return res.status(201).json({"user":user,"token":token});
+        writeToLog({ "timestamp": new Date(), "action": "succeeded to add user" })//how to write succeeded?
+        const token = generateAccessToken(user);
+        return res.status(201).json({ "user": user, "token": token });
     } catch (error) {
         console.error("Signup error:", error.message);
+        writeToLog({ "timestamp": new Date(), "action": "user add failed" })
         return res.status(500).json({ error: "Internal server error" });
     }
 });
@@ -41,19 +43,22 @@ router.post('/login', async (req, res) => {
     try {
         const user = await GenericGet("user", "userName", userName);
         if (!user) {
+            writeToLog({ "timestamp": new Date(), "action": "user login failed" })
             return res.status(404).json({ error: "User not found" });
         }
         const userPassword = await GenericGet("userpassword", "userId", user[0].id);
         if (!userPassword) {
+            writeToLog({ "timestamp": new Date(), "action": "user login failed", "itemID": user.id })
             return res.status(404).json({ error: "Invalid user name or password" });
         }
         const isMatch = await bcrypt.compare(password, userPassword[0].password);
         if (!isMatch) {
+            writeToLog({ "timestamp": new Date(), "action": "user login failed", "itemID": user.id })
             return res.status(401).json({ error: "Invalid user name or password" });
         }
-       // writeToLog({ "timestamp": new Date(), "action": "login success", "itemID": user.id });
-       const token= generateAccessToken(user[0]);
-       return res.status(200).json({"user":user,"token":token});
+        writeToLog({ "timestamp": new Date(), "action": "login success", "itemID": user.id });
+        const token = generateAccessToken(user[0]);
+        return res.status(200).json({ "user": user, "token": token });
     } catch (error) {
         console.error("Login error:", error);
         return res.status(500).json({ error: "Internal server error" });

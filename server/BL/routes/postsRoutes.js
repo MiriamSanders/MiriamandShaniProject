@@ -1,5 +1,5 @@
 const express = require("express");
-const { GenericPost, GenericPut, CascadeDelete } = require("../../DL/genericDL");
+const { GenericPost, GenericPut, CascadeDelete ,writeToLog} = require("../../DL/genericDL");
 const { getPosts } = require("../../DL/postDL");
 const { authenticateToken } = require("../middlewere/handleToken");
 const router = express.Router();
@@ -29,8 +29,10 @@ router.post('/', async (req, res) => {
         const {  title, body } = req.body;
         const newPost = await GenericPost("posts", { "userId":user.id, title, body });
         if (!newPost) {
+            writeToLog({ "timestamp": new Date(), "action": "post add failed","table":"posts" })
             return res.status(400).json({ message: 'Failed to create post' });
         }
+        writeToLog({ "timestamp": new Date(), "action": "post add success","table":"posts","itemID": newPost.id })
         res.status(201).json(newPost); 
     } catch (err) {
         console.error('Error creating post:', err);
@@ -68,6 +70,7 @@ router.delete("/:id", async (req, res) => {
         if (!deletedPost) {
             return res.status(404).json({ message: 'post not found' });
         }
+        writeToLog({ "timestamp": new Date(), "action": "post delete success","table":"posts","itemID": id })
         res.status(200).json({ message: 'post and post\'s comments deleted successfully', deletedPost });
     } catch (err) {
         console.error('Error deleting post:', err);

@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { GenericGet, GenericPost, GenericPut, GenericDelete } = require("../../DL/genericDL");
+const { GenericGet, GenericPost, GenericPut, GenericDelete,writeToLog } = require("../../DL/genericDL");
 const { authenticateToken } = require("../middlewere/handleToken");
 router.get('/', async(req, res) => {
     try {
@@ -26,8 +26,10 @@ router.post('/', async (req, res) => {
             return res.status(401).json({ error: "Unauthorized" });
         }
         const comment= await GenericPost("comments", req.body);
+        writeToLog({ "timestamp": new Date(), "action": "comment add success","table":"comments","itemID": comment.id })
         res.status(201).json( comment); 
     } catch (error) {
+        writeToLog({ "timestamp": new Date(), "action": "comment add failed","table":"comments" })
         console.error(error);
         res.status(500).json({ error: "Internal server error" });
     }
@@ -60,6 +62,7 @@ router.delete('/:id', async (req, res) => {
         if (affectedRows === 0) {
             return res.status(404).json({ error: "Comment not found" });
         }
+        writeToLog({ "timestamp": new Date(), "action": "post delete success","table":"topostdos","itemID": req.params.id })
         res.status(200).json({ message: "Comment deleted successfully" });
     } catch (error) {
         console.error(error);

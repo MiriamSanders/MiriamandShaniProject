@@ -25,7 +25,7 @@ const navigate = useNavigate();
         headers: {
           'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('userToken')), // Add your JWT token here
           'Content-Type': 'application/json'
-        }
+        },
       });
       if (response.status === 401) {
         localStorage.removeItem("user");

@@ -1,5 +1,5 @@
 const express = require("express");
-const { GenericGet, GenericPost, GenericPut, GenericDelete } = require("../../DL/genericDL");
+const { GenericGet, GenericPost, GenericPut, GenericDelete,writeToLog } = require("../../DL/genericDL");
 const { authenticateToken } = require("../middlewere/handleToken");
 const router = express.Router();
 router.get('/', async (req, res) => {
@@ -46,8 +46,10 @@ router.post('/', async (req, res) => {
         const { body, completed } = req.body;
         const newTodo = await GenericPost("todos", { "userId":user.id, body, completed });
         if (!newTodo) {
+            writeToLog({ "timestamp": new Date(), "action": "todo add failed","table":"todos" })
             return res.status(400).json({ message: 'Failed to create todo' });
         }
+        writeToLog({ "timestamp": new Date(), "action": "todo add success","table":"todos","itemID": newTodo.id })
         res.status(201).json(newTodo);
     } catch (err) {
         console.error('Error creating todo:', err);
@@ -66,6 +68,7 @@ router.delete('/:id', async (req, res) => {
         if (!deletedTodo) {
             return res.status(404).json({ message: 'Todo not found' });
         }
+        writeToLog({ "timestamp": new Date(), "action": "todo delete success","table":"todos","itemID": id })
         res.status(200).json({ message: 'Todo deleted successfully' });
     } catch (err) {
         console.error('Error deleting todo:', err);

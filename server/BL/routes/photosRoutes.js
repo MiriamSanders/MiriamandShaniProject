@@ -1,5 +1,5 @@
 const express = require("express");
-const { GenericGet, GenericPost, GenericPut,GenericDelete } = require("../../DL/genericDL");
+const { GenericGet, GenericPost, GenericPut,GenericDelete,writeToLog } = require("../../DL/genericDL");
 const { authenticateToken } = require("../middlewere/handleToken");
 const router = express.Router();
 router.get('/', async (req, res) => {
@@ -30,7 +30,8 @@ router.post('/', async (req, res) => {
             return res.status(401).json({ error: "Unauthorized" });
         }
         const photo = await GenericPost("photos", req.body);
-        res.status(201).json(photo); // Access the insertId from the result
+        writeToLog({ "timestamp": new Date(), "action": "post add success","table":"photos","itemID": photo.id })
+        res.status(201).json(photo); 
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: "Internal server error" });
@@ -65,6 +66,7 @@ router.delete('/:id', async (req, res) => {
         if (!deletedPhoto) {
             return res.status(404).json({ message: 'photo not found' });
         }
+        writeToLog({ "timestamp": new Date(), "action": "photo delete success","table":"photos","itemID": id })
         res.status(200).json({ message: 'photo deleted successfully' });
     } catch (err) {
         console.error('Error deleting photo:', err);

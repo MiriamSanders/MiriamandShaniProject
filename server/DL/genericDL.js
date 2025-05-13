@@ -3,7 +3,7 @@ const dbPromise = require("../dbConnection");
 
 async function GenericGet(table, fieldName, fieldValue, limit, offset) {
     try {
-        const db = await dbPromise; // Get the database connection
+        const db = await dbPromise;
         const params = [table, fieldName, fieldValue];
         let query = `
             SELECT * 
@@ -20,7 +20,7 @@ async function GenericGet(table, fieldName, fieldValue, limit, offset) {
         }
         const [rows] = await db.execute(mysql.format(query, params));
         if (rows.length === 0) {
-            return null; // No rows found
+            return null;
         }
         return rows;
     } catch (error) {
@@ -31,20 +31,16 @@ async function GenericGet(table, fieldName, fieldValue, limit, offset) {
 async function GenericPost(table, data) {
     try {
         const db = await dbPromise;
-
-        // Insert the data
         const insertQuery = mysql.format(`INSERT INTO ?? SET ?`, [table, data]);
         const [insertResult] = await db.execute(insertQuery);
 
         let id = insertResult.insertId;
 
         if (id) {
-            // If insertId exists, get the full row by id
             const selectQuery = mysql.format(`SELECT * FROM ?? WHERE id = ?`, [table, id]);
             const [rows] = await db.execute(selectQuery);
             return rows[0] || null;
         } else if (data.userId) {
-            // Fallback: if insertId doesn't exist, try getting the row by userID
             const idQuery = mysql.format(`SELECT * FROM ?? WHERE userId = ?`, [table, data.userId]);
             const [rows] = await db.execute(idQuery);
             if (rows.length === 0) throw new Error('No record found for the given userID');
@@ -68,8 +64,8 @@ async function GenericPut(table, id, data) {
         `, [table, data, id]);
         await db.execute(updateQuery);
         const selectQuery = mysql.format(`SELECT * FROM ?? WHERE id = ?`, [table, id]);
-            const [rows] = await db.execute(selectQuery);
-            return rows[0] || null;// Return the number of affected rows
+        const [rows] = await db.execute(selectQuery);
+        return rows[0] || null;
     } catch (error) {
         console.error('Error updating data:', error);
         throw error;
@@ -78,14 +74,14 @@ async function GenericPut(table, id, data) {
 
 async function GenericDelete(table, id) {
     try {
-        const db = await dbPromise; // Get the database connection
+        const db = await dbPromise;
         const query = mysql.format(` 
             UPDATE ?? 
             SET is_deleted = 1 
             WHERE id = ?
         `, [table, id]);
         const [result] = await db.execute(query, [table, id]);
-        return result.affectedRows; // Return the number of affected rows
+        return result.affectedRows;
     } catch (error) {
         console.error('Error deleting data:', error);
         throw error;
@@ -94,17 +90,13 @@ async function GenericDelete(table, id) {
 
 async function CascadeDelete(table, id, foreignKeyTable, foreignKeyColumn) {
     try {
-        const db = await dbPromise; // Get the database connection
-
-        // Mark the main record as deleted
+        const db = await dbPromise;
         const mainQuery = mysql.format(`
             UPDATE ?? 
             SET is_deleted = 1 
             WHERE id = ?
         `, [table, id]);
         await db.execute(mainQuery);
-
-        // Mark the referencing records as deleted
         const cascadeQuery = mysql.format(`
             UPDATE ?? 
             SET is_deleted = 1 
@@ -112,15 +104,16 @@ async function CascadeDelete(table, id, foreignKeyTable, foreignKeyColumn) {
         `, [foreignKeyTable, foreignKeyColumn, id]);
         await db.execute(cascadeQuery);
 
-        return true; // Indicate success
+        return true;
     } catch (error) {
         console.error('Error performing cascade delete:', error);
         throw error;
     }
 }
-async function writeToLog(data){
-    const logQuery=mysql.format(`INSERT INTO logs SET ?`,[data]);
+async function writeToLog(data) {
+    const db = await dbPromise;
+    const logQuery = mysql.format(`INSERT INTO logs SET ?`, [data]);
     await db.execute(logQuery);
 }
-module.exports = { GenericGet, GenericPost, GenericPut, GenericDelete, CascadeDelete,writeToLog };
+module.exports = { GenericGet, GenericPost, GenericPut, GenericDelete, CascadeDelete, writeToLog };
 
